@@ -1,0 +1,342 @@
+{% extends 'admin_templates/sidebar2.html' %}
+
+
+
+{% block content %}
+
+<div class="row tm-content-row mt-5 ms-3">
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col">
+        <div class="tm-bg-primary-dark tm-block">
+            <h2 class="tm-block-title">Total Orders by this month</h2>
+            <canvas id="myChart1"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+                  <script>
+                    
+                    const ctx1 = document.getElementById('myChart1');
+                  
+                    new Chart(ctx1, {
+                      type: 'bar',
+                      data: {
+                        labels: {{ monthNumber|safe }},
+                        datasets: [{
+                          label: 'Total orders by this month',
+                          data: {{ totalOrders|safe }},
+                          borderWidth: 1
+                        }]
+                      },
+                      options: {
+                        scales: {
+                          y: {
+                            beginAtZero: true
+                          }
+                        }
+                      }
+                    });
+                  </script>
+                  
+
+        </div>
+    </div>
+
+    
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col ">
+        <div class="tm-bg-primary-dark tm-block">
+            <h2 class="tm-block-title">Total Orders (by month)</h2>
+
+            <table class="table" id="delivered_order_month_table">
+                <!-- <caption>List of categories</caption> -->
+                <thead>
+                  <tr>
+                    <th scope="col">Day/Month</th>
+                    <th scope="col">Order Count</th>
+                   </tr>
+                </thead>
+                <tbody>
+                  
+                    {% for order in order_by_months %}
+                  <tr>
+                    <td>{{order.day}}/{{ order.month}}</td>
+                    <td>{{ order.count }}</td>   
+                  </tr>
+                  {% endfor %}
+                   
+  
+                </tbody>
+              </table>
+
+              <div class="row ml-5">
+                <div class="text-center mt-3 col-6">
+                    <a onclick="exportTableToExcel('delivered_order_month_table','delivered_order_by_month')"  class="btn btn-success">Download Excel</a>
+                </div>
+                <div class="text-center mt-3 col-6">
+                    <a onclick="exportTableToPDF('delivered_order_month_table','delivered_order_by_month')"  class="btn btn-success">Download Pdf</a>
+                </div>
+                  </div>
+               
+        </div>
+    </div>
+</div>
+
+
+<div class="row tm-content-row mt-5 ms-3">
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+        <div class="tm-bg-primary-dark tm-block">
+            <h2 class="tm-block-title">Succesful Orders by month</h2>
+            <canvas id="myChart2"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+                  <script>
+                    
+                    const ctx2 = document.getElementById('myChart2');
+                  
+                    new Chart(ctx2, {
+                      type: 'bar',
+                      data: {
+                        labels: {{ delivered_orders_month|safe }},
+                        datasets: [{
+                          label: 'Succesful orders by month',
+                          data: {{ delivered_orders_number|safe }},
+                          borderWidth: 1
+                        }]
+                      },
+                      options: {
+                        scales: {
+                          y: {
+                            beginAtZero: true
+                          }
+                        }
+                      }
+                    });
+                  </script>
+                  
+
+        </div>
+    </div>
+
+    
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+        <div class="tm-bg-primary-dark tm-block">
+            <h2 class="tm-block-title">Succesful Orders (by month)</h2>
+
+            <table class="table" id="delivered_order_month_table2">
+                <!-- <caption>List of categories</caption> -->
+                <thead>
+                  <tr>
+                    <th scope="col">Month</th>
+                    <th scope="col">Order Count</th>
+                   </tr>
+                </thead>
+                <tbody>
+                  
+                    {% for order in delivered_orders_by_months %}
+                  <tr>
+                    <td> {{order.delivered_month}}</td>
+                    <td>{{ order.delivered_count }}</td>   
+                  </tr>
+                  {% endfor %}
+                   
+  
+                </tbody>
+              </table>
+
+              <div class="row ml-5">
+                <div class="text-center mt-3 col-6">
+                    <a onclick="exportTableToExcel('delivered_order_month_table2','delivered_order_by_month')"  class="btn btn-success">Download Excel</a>
+                </div>
+                <div class="text-center mt-3 col-6">
+                    <a onclick="exportTableToPDF('delivered_order_month_table2','delivered_order_by_month')"  class="btn btn-success">Download Pdf</a>
+                </div>
+                  </div>
+               
+        </div>
+    </div>
+</div>
+
+<!-- Yearly Report -->
+<div class="row tm-content-row mt-5 ms-3">
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+    <div class="tm-bg-primary-dark tm-block">
+        <h2 class="tm-block-title">Total Orders by Year</h2>
+        <!-- Chart for total orders by year -->
+        <canvas id="myChart3"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        const ctx3 = document.getElementById('myChart3');
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+            labels: {{ yearNumber|safe }},
+            datasets: [{
+                label: 'Total orders by year',
+                data: {{ totalOrdersYear|safe }},
+                borderWidth: 1
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+        </script>
+    </div>
+    </div>
+    
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+        <div class="tm-bg-primary-dark tm-block">
+        <h2 class="tm-block-title">Total Orders (by year)</h2>
+        <table class="table" id="delivered_order_year_table">
+            <thead>
+            <tr>
+                <th scope="col">Year</th>
+                <th scope="col">Order Count</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in order_by_years%}
+            <tr>
+                <td>{{ order.year }}</td>
+                <td>{{ order.count }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="row ml-5">
+            <div class="text-center mt-3 col-6">
+            <a onclick="exportTableToExcel('delivered_order_year_table','delivered_order_by_year')" class="btn btn-success">Download Excel</a>
+            </div>
+            <div class="text-center mt-3 col-6">
+            <a onclick="exportTableToPDF('delivered_order_year_table','delivered_order_by_year')" class="btn btn-success">Download Pdf</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+    <div class="tm-bg-primary-dark tm-block">
+        <h2 class="tm-block-title">Successful Orders by Year</h2>
+        <!-- Chart for successful orders by year -->
+        <canvas id="myChart4"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        const ctx4 = document.getElementById('myChart4');
+        new Chart(ctx4, {
+            type: 'bar',
+            data: {
+            labels: {{ delivered_orders_year|safe }},
+            datasets: [{
+                label: 'Successful orders by year',
+                data: {{ delivered_orders_year_number|safe }},
+                borderWidth: 1
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+        </script>
+    </div>
+    </div>
+
+
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+    <div class="tm-bg-primary-dark tm-block">
+        <h2 class="tm-block-title">Successful Orders (by year)</h2>
+        <table class="table" id="successful_order_year_table">
+        <thead>
+            <tr>
+            <th scope="col">Year</th>
+            <th scope="col">Order Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in delivered_orders_by_years %}
+            <tr>
+            <td>{{ order.delivered_year }}</td>
+            <td>{{ order.delivered_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        <div class="row ml-5">
+        <div class="text-center mt-3 col-6">
+            <a onclick="exportTableToExcel('successful_order_year_table','successful_order_by_year')" class="btn btn-success">Download Excel</a>
+        </div>
+        <div class="text-center mt-3 col-6">
+            <a onclick="exportTableToPDF('successful_order_year_table','successful_order_by_year')" class="btn btn-success">Download Pdf</a>
+        </div>
+        </div>
+    </div>
+    </div>
+          </div>
+
+
+<script src="https://unpkg.com/xlsx/dist/xlsx.core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+
+
+        <script>
+            function exportTableToExcel(tableID, filename = '') {
+                console.log("ok")
+            var tableSelect = document.getElementById(tableID);
+            var sheet = XLSX.utils.table_to_sheet(tableSelect);
+        
+            // Create a new workbook and add the sheet
+            var workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet1');
+        
+            // Specify the file name
+            filename = filename ? filename + '.xlsx' : 'excel_data.xlsx';
+        
+            // Generate the XLSX file
+            var excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            var blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        
+            // Download the blob as a file
+            download(blob, filename);
+            }
+        
+            function download(blob, filename) {
+            var url = window.URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            }
+        
+        
+            </script>
+        
+        
+            <!-- convert to pdf script -->
+        
+        <script>
+        
+            function exportTableToPDF(tableID, filename = '') {
+              var tableSelect = document.getElementById(tableID);
+            
+              // Specify the file name
+              filename = filename ? filename : 'table_data';
+            
+              // Generate the PDF file
+              const { jsPDF } = window.jspdf; 
+              var doc = new jsPDF();
+              doc.autoTable({ html: '#' + tableID });
+            
+              // Download the PDF file
+              doc.save(filename + '.pdf');
+            }
+            </script>
+
+
+
+{% endblock %}

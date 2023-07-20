@@ -1,0 +1,161 @@
+{% extends 'user_templates/base.html' %}
+
+ {% load static %}
+
+ {% block content %}
+
+ <!DOCTYPE html>
+ <html>
+ <head>
+     <title>Sidebar Example</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" href=" https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css ">
+   
+
+     <style>
+        .sidebar {
+            height: 100vh;
+            width:400px;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #343a40;
+            color: #fff;
+        }
+        
+        @media (max-width: 768px) {
+            .d-flex {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                height: auto;
+                min-height: 100vh;
+            }
+        }
+         .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            margin-top:30px;
+            margin-left:80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .profile-heading {
+            width:500px
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-details {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        .profile-details .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .profile-details .field {
+            margin-bottom: 15px;
+        }
+        
+        .profile-details .field label {
+            font-weight: bold;
+        }
+        
+        .profile-details .field-value {
+            margin-top: 5px;
+        }
+        .letter_design{
+            font-size:25px;
+        }
+        .alignn{
+            margin-top:60px;
+            
+
+        }
+     </style>
+ </head>
+ <body>
+   
+        <div class="row ">
+    <div class="d-flex">
+        <div class="sidebar pl-5 ">
+            <ul class="nav flex-column">
+                <div class="row ">
+                
+            </div>
+                <li class="nav-item pt-5">
+                    {% comment %} <a class="nav-link active" href="{% url 'user_profile'%}">USER PROFILE</a> {% endcomment %}
+                </li>
+                <li class="nav-item pt-5">
+                    {% comment %} <a class="nav-link" href="{%url 'addressbook'%}">ADDRESS BOOK</a> {% endcomment %}
+                </li>
+                <li class="nav-item pt-5">
+                    <a class="nav-link" href="#">ORDERS</a>
+                </li>
+                <li class="nav-item pt-5">
+                    <a class="nav-link" href="{%url 'cart'%}">CART</a>
+                </li>
+                <li class="nav-item pt-5">
+                    <a class="nav-link" href="#">WISHLIST</a>
+                </li>
+                <li class="nav-item pt-5">
+                    <a class="nav-link" href="#">WALLET</a>
+                </li>
+            </ul>
+        </div>
+        <div class="content p-3">
+            <!-- Content goes here -->
+        </div>
+    </div>
+
+{% comment %} user profile content {% endcomment %}
+     
+
+
+     <div class="col-lg-8 mx-auto ">
+    <div class="bg-light rounded h-100 p-4 ">
+        <div class="title"> <h2> ADD ADDRESS</h2></div>
+        {% comment %} <div class="text-right">
+            <img src="{{userprofile.profile_picture.url}}" alt="Profile_Picture" width="100" style="border-radius:50px ">
+        </div> {% endcomment %}
+        <form action="" method="POST">
+            {% csrf_token %}
+           {{product_form.as_p}}
+            
+            <input type="submit" value="save changes" class="btn btn-primary">
+        </form>
+            
+        </div>
+    </div>
+    
+    </div>
+    </div>
+    
+    </div> 
+
+{% comment %} user profile content ends here {% endcomment %}
+     
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ </body>
+ </html>
+ 
+{% endblock %}

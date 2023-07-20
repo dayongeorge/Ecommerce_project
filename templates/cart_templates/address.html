@@ -1,0 +1,131 @@
+{% extends 'user_templates/base.html' %}
+
+ {% load static %}
+
+ {% block content %}
+
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h3 class="mt-5">Billing Details</h3>
+                <form class="row contact_form" action="" method="post">
+                    {% csrf_token %}
+                    <div class="col-md-6 form-group p_star">
+                      {{form.email}}
+                      {% if form.errors.email %}
+                                    <label class="text-danger">{{form.errors.email}}</label>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      {{form.phone_number}}
+                      {% if form.errors.phone_number %}
+                                    <label class="text-danger">{{form.errors.phone_number}}</label>
+                      {% endif %}
+                    </div>
+                   
+                    <div class="col-md-6 form-group p_star">
+                     {{form.country}}
+                     {% if form.errors.country %}
+                                    <label class="text-danger">{{form.errors.country}}</label>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      {{form.state}}
+                      {% if form.errors.state %}
+                                    <label class="text-danger">{{form.errors.state}}</label>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="col-md-12 form-group p_star">
+                      {{form.address}}
+                      {% if form.errors.address %}
+                                    <label class="text-danger">{{form.errors.address}}</label>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="col-md-12 form-group p_star">
+                      {{form.district}}
+                      {% if form.errors.district %}
+                                    <label class="text-danger">{{form.errors.district}}</label>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-12 form-group p_star">
+                      {{form.city}}
+                      {% if form.errors.city %}
+                                    <label class="text-danger">{{form.errors.city}}</label>
+                      {% endif %}
+                    </div>
+                   
+                    <div class="col-md-12 form-group">
+                      {{form.pincode}}
+                      {% if form.errors.pincode %}
+                                    <label class="text-danger">{{form.errors.pincode}}</label>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-12  form-group p_star mt-3">
+                    <h3 class="mt-5">Shipping Details</h3>
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      {{ship_form.email}}
+                      {% if ship_form.errors.email %}
+                                    <label class="text-danger">{{ship_form.errors.email}}</label>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      {{ship_form.phone_number}}
+                      {% if ship_form.errors.phone_number %}
+                                    <label class="text-danger">{{ship_form.errors.phone_number}}</label>
+                      {% endif %}
+                    </div>
+                   
+                    <div class="col-md-6 form-group p_star">
+                     {{ship_form.country}}
+                     {% if ship_form.errors.country %}
+                                    <label class="text-danger">{{ship_form.errors.country}}</label>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      {{ship_form.state}}
+                      {% if ship_form.errors.state %}
+                                    <label class="text-danger">{{ship_form.errors.state}}</label>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="col-md-12 form-group p_star">
+                      {{ship_form.address}}
+                      {% if ship_form.errors.address %}
+                                    <label class="text-danger">{{ship_form.errors.address}}</label>
+                      {% endif %}
+                    </div>
+                    
+                    <div class="col-md-12 form-group p_star">
+                      {{ship_form.district}}
+                      {% if ship_form.errors.district %}
+                                    <label class="text-danger">{{ship_form.errors.district}}</label>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-12 form-group p_star">
+                      {{ship_form.city}}
+                      {% if ship_form.errors.city %}
+                                    <label class="text-danger">{{ship_form.errors.city}}</label>
+                      {% endif %}
+                    </div>
+                   
+                    <div class="col-md-12 form-group">
+                      {{ship_form.pincode}}
+                      {% if ship_form.errors.pincode %}
+                                    <label class="text-danger">{{ship_form.errors.pincode}}</label>
+                      {% endif %}
+                    </div>
+                    
+                    <div>
+                    <input type="submit" class="btn_3 mt-3 mx-3" value="Add Address">
+                    </div>
+                  </form> 
+                </div>
+                </div>
+            </div>
+        </main>
+
+{% endblock %}

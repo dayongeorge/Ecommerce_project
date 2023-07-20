@@ -1,0 +1,85 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+    <main>
+        <!-- Hero Area Start-->
+        
+        <!-- Hero Area End-->
+        <!--================login_part Area =================-->
+        <section class="login_part pt-5 ">
+            <div class="container rounded shadow">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="login_part_text text-center">
+                            <div class="login_part_text_iner">
+                                <h2>Already a User?</h2>
+                                <p>There are advances being made in science and technology
+                                    everyday, and a good example of this is the</p>
+                                <a href="{%url 'login_view'%}" class="btn_3">Login to Account</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 mt-3">
+                        <div class="login_part_form">
+                            <div class="login_part_form_iner">
+                                <h3>Welcome to our store ! <br>
+                                    Please Sign Up</h3>
+                                
+                                
+                                <form method="post">
+                                {% csrf_token %}
+                                
+                                <div class="col-md-12 form-group p_star">
+                                    {{form.username}}
+                                    {% if form.errors.username %}
+                                    <label class="text-danger">{{form.errors.username}}</label>
+                                    {% endif %}
+
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {{form.email}}
+                                    {% if form.errors.email %}
+                                    <label class="text-danger">{{form.errors.email}}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {{form.phone_number}}
+                                    {% if form.errors.phone_number %}
+                                    <label class="text-danger">{{form.errors.phone_number}}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {{form.password1}}
+                                    {% if form.errors.password1 %}
+                                    <label class="text-danger">{{form.errors.password1}}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-12 form-group p_star">
+                                    {{form.password2}}
+                                    {% if form.errors.password2 %}
+                                    <label class="text-danger">{{form.errors.password2}}</label>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-12 form-group">
+                                    <div class="creat_account d-flex align-items-center">
+                                        <input type="checkbox" id="f-option" name="selector">
+                                        <label for="f-option">Remember me</label>
+                                    </div>
+                                    <button type="submit" value="submit" class="btn_3">
+                                        Sign Up
+                                    </button>
+                                    <p class="lost_pass">Already have an account?  <a class="lost_pass" href="{% url 'login_view' %}">Login</a> </p>
+                                    
+                                </div>
+                                
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--================login_part end =================-->
+    </main>
+   {% endblock %}

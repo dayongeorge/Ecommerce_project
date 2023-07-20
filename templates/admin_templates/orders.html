@@ -1,0 +1,87 @@
+{% extends 'admin_templates/sidebar2.html' %}
+
+
+
+{% block content %}
+
+
+
+
+<div class="container mt-5">
+<div class="row ">
+    <div class="col-lg-10 mx-auto">
+<div class="bg-secondary rounded h-100 p-4 ">
+    <h6 class="mb-4">Orders</h6>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    {% comment %} <th scope="col">Order Number</th> {% endcomment %}
+                    <th scope="col">Payment Number</th>
+                    <th scope="col">Payment Method</th>
+                    <th scope="col">Amount Paid</th>
+                    <th scope="col">Payment Status</th>
+
+
+
+                    {% comment %} <th scope="col">Full name</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">IP</th> {% endcomment %}
+                    <th scope="col">Created At</th>
+
+
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    {% comment %} <th scope="row">{{order.order.order_number}}</td> {% endcomment %}
+                    <td> {{ order.id }}</th>
+                    <td> {{ order.payment.payment_method }}</td>
+                    <td> {{ order.payment.amount_paid }}</td>
+                    <td> {{ order.payment.status }}</td>
+                    
+
+
+                    {% comment %} <td>{{order.full_name}}</td>
+
+                    <td>{{order.order.phone}}</td>
+                    <td>{{order.order.email}}</td>
+                    <td>{{order.order.ip}}</td> {% endcomment %}
+                    <td>{{order.order.created_at}}</td>
+                    <td style="color: {% if order.order.status == 'New' %}blue{% elif order.order.status == 'Delivered' %}green{% elif order.order.status == 'Pending' %}yellow{% elif order.order.status == 'Confirmed' %}orange{% elif order.order.status == 'Cancelled' %}red {% elif order.order.status == 'Shipped' %}white{% endif %}">{{ order.order.status }}</td>
+
+                    <td> 
+                        <form method="POST" action="{% url 'edit_order' order.order.id %}">
+                            {% csrf_token %}
+                            <select name="status">
+                                <option value="New" {% if order.order.status == 'New' %}selected{% endif %}>New</option>
+                                <option value="Pending" {% if order.order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Confirmed" {% if order.order.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="Shipped" {% if order.order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                                <option value="Delivered" {% if order.order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+
+                                <option value="Cancelled" {% if order.order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                            <button type="submit">Change</button>
+                        </form>
+          
+                    </td>
+                    
+                    
+                </tr>
+                {% endfor %} 
+                
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+<a  href="add_product" class="btn btn-primary mt-3">Add Product</a>
+</div>
+</div>
+
+</div>
+{% endblock %}

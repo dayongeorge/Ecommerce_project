@@ -1,0 +1,270 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+
+
+  <main>
+      <!-- Hero Area Start-->
+      <div class="slider-area ">
+          <div class="single-slider slider-height2 d-flex align-items-center">
+              <div class="container">
+                  <div class="row">
+                          <div class="hero-cap text-center">
+                              <h2>Review Your Order And Make Payment</h2>
+                          </div>
+                      </div>
+                  
+              </div>
+          </div>
+      </div>
+      <!--================Cart Area =================-->
+          
+            <section class="cart_area section_padding">
+              <div class="container">
+                <div class="row">
+                  <div class="col-xl-8">
+                    <div class="card">
+                      <h5 class="card-header">Billing Address</h5>
+                      <div class="card-body">
+                        <p class="card-text mb-2">{{address.name}}</p>
+                        <p class="card-text mb-2">{{address.address_line_1}}</p>
+                        <p class="card-text mb-2">{{address.city}}, {{order.state}}</p>
+                        <p class="card-text mb-2">{{address.country}}</p>
+                        <p class="card-text mb-2">{{user.email}}</p>
+                        <p class="card-text mb-2">{{address.phone}}</p>
+                        <p class="card-text mb-2">{{address.pincode}}</p>
+
+                        {% if order.order_note %}
+                        <p><b>Order Note:</b> {{order.order_note}}</p>
+                        {% endif %}
+                      </div>
+                    </div>
+          
+                    
+          
+                    <div class="card">
+                      <h5 class="card-header">Review Products</h5>
+                      <div class="card-body">
+                        <div class="table-responsive">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                                
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for cart_item in cart_items %}
+                              <tr>
+                                <td>
+                                  <div class="media">
+                                    <div class="d-flex">
+                                      <img src="{{ cart_item.product.product_image.url }}" alt="" class="product-image" />
+                                    </div>
+                                    <div class="media-body">
+                                      <p><a href="{{ cart_item.product.get_url }}" class="title text-dark"><b>{{ cart_item.product.name }}</b></a></p>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <h5>{{ cart_item.product.offer_price }}</h5>
+                                </td>
+                                <td>
+                                  {{cart_item.quantity}}
+                                </td>
+                                <td>
+                                  <h5><b>{{ cart_item.sub_total }}</b></h5>
+                                </td>
+                               
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {% comment %} <div class="card">
+                        <h5 class="card-header">Payment Method</h5>
+                        <div class="card-body">
+                             <a href="{% url 'place_order' id=address.id payment_method=Paypal%}"><button class-"btn btn-primary"> 
+                            <p class="card-text">Paypal</p> </button></a>
+                        </div> 
+                      
+                       
+  
+                      </div> {% endcomment %}
+                    </div>
+                  </div>
+
+
+          
+              <div class="col-xl-4">
+                <div class="cart_inner">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th></th>
+                          <th>
+                            <h5>Total</h5>
+                            <h5 class="pt-3">Tax</h5>
+                            <h5 class="pt-3">Subtotal</h5>
+                          </th>
+                          <th>
+                            <h5>${{total1}}</h5>
+                            <h5 class="pt-3">${{tax}}</h5>
+                            <h5 class="pt-3"> <b>${{sum}} </b> </h5>
+                          </th>
+                        </tr>
+                      </thead>
+                    </table>
+                 
+
+{% comment %} ################################ {% endcomment %}
+<h5 >Payment Method</h5>
+
+<div id="paypal-button-container"></div>
+<div><button id="rzp-button1" class="btn btn-success" payment='Online'>Pay with Razorpay</button></div>
+<div class="mt-4">
+  <a href="{% url 'place_order' id=address.id payment_method='COD'%}"><button type="button" class="btn btn-primary">
+  Cash on Delivery </button></a>
+</div> 
+
+<!-- Include the PayPal JavaScript SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=AfsbnQF09x07ZljWFjfk0GIPOEjeZ2Ndh5S5jgHUO5lNHf75K3KMNlu2Le0_jVSjQsdTRn5D7wG9xI8p&currency=USD"></script>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	<script>
+		var options = {
+			"key": "rzp_test_mGBSAJKgp2owcH", // Enter the Key ID generated from the Dashboard
+			"amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+			"currency": "INR",
+			"name": "Time Zone",
+			"description": "Test Transaction",
+			"image": "https://example.com/your_logo",
+			//"order_id": "order_IluGWxBm9U8zJ8", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+			"handler": function (response){
+				//alert(response.razorpay_payment_id);
+				//alert(response.razorpay_order_id);
+				//alert(response.razorpay_signature)
+				window.location.href = "{% url 'place_order' id=address.id payment_method='Online' %}";
+			},
+			
+			"theme": {
+				"color": "#3399cc"
+			}
+		};
+		var rzp1 = new Razorpay(options);
+		rzp1.on('payment.failed', function (response){
+				alert(response.error.code);
+				alert(response.error.description);
+				alert(response.error.source);
+				alert(response.error.step);
+				alert(response.error.reason);
+				alert(response.error.metadata.order_id);
+				alert(response.error.metadata.payment_id);
+		});
+		document.getElementById('rzp-button1').onclick = function(e){
+			rzp1.open();
+			e.preventDefault();
+		}
+		</script>
+
+
+
+
+{% comment %} <script>
+
+  function getCookie(name){
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== ''){
+        const cookies = document.cookie.split(';');
+        for(let i = 0;i < cookies.length;i++ ){
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length +1) === (name + '=')){
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+} 
+
+  
+
+ {% comment %} var url="{% url 'Paypal_payments '%}"    
+  var csrftoken = getCookie('csrftoken');
+  var orderID="{{order.order_number}}"
+  var payment_method='PayPal'
+  var redirect_url="{%url 'order_complete'%}" 
+
+
+
+  paypal.Buttons({
+    createOrder: function(data, actions) {
+      return actions.order.create({
+        purchase_units: [
+          {
+            amount: {
+              currency_code: 'USD',
+              value: '{{ grand_total }}' // Replace with the actual total amount
+            }
+          }
+        ]
+      });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        console.log(details);
+        sendData();
+       // swal("Congratulations!", "Your Order Has Been Placed Successfully","success").then((value) =>{
+       //   window.location.href = "/shop/confirmation"
+      //}) 
+      function sendData(){
+        fetch(url, {
+          method :"POST",
+          headers:{
+            "Content-type": "application/json",
+            "X-CSRFToken":csrftoken,
+          },
+          body: JSON.stringify({
+            orderID:orderID,
+            transID:details.id,
+            payment_method:payment_method,
+            status:details.status,
+          }),
+        })
+         .then(response => response.json())
+         .then(data=> {
+        window.location.href=redirect_url + '?order_number='+data.order_number+'&payment_id='+data.transID ;
+         }); 
+      }
+        
+      });
+    }
+  }).render('#paypal-button-container');
+</script>  {% endcomment %}
+
+
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      </section>
+      <!--================End Cart Area =================-->
+  </main>
+
+  
+
+  
+ 
+  {% endblock %}

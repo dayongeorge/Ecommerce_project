@@ -1,0 +1,248 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+<div class="header-area">
+    <div class="main-header header-sticky">
+        <div class="container-fluid"  style="margin-top:-45px;">
+            <div class="menu-wrapper " style="padding-left:250px; ">
+             
+<div class="main-menu d-none d-lg-block ">
+    <nav>                                                
+        <ul id="navigation">  
+            <li class="pl-5"><a href="{% url 'home' %}">WATCHES </a></li>
+            <li class="pl-5"><a href="{% url 'sidebar' %}">shop</a></li>
+            <li class="pl-5"><a href="{% url 'category' %}">Category</a></li>
+            <li class="hot pl-5"><a href="{% url 'brand' %}">Brand</a>
+                {% comment %} <ul class="submenu">
+                    <li><a href="shop.html"> Product list</a></li>
+                    <li><a href="product_details.html"> Product Details</a></li>
+                </ul> {% endcomment %}
+            </li>
+            <li class="pl-5"><a href="blog.html">Blog</a>
+                <ul class="submenu">
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="blog-details.html">Blog Details</a></li>
+                </ul>
+            </li>
+            <li class="pl-5"><a href="#">Pages</a>
+                <ul class="submenu "> 
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="cart.html">Cart</a></li>
+                    <li><a href="elements.html">Element</a></li>
+                    <li><a href="confirmation.html">Confirmation</a></li>
+                    <li><a href="checkout.html">Product Checkout</a></li>
+                </ul>
+            </li>
+            <li class="pl-5"><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+</div>
+
+    <div class="mobile_menu d-block d-lg-none"></div>
+
+</div>
+</div>
+</div>
+
+
+<div class="popular-items ">
+    <div class="container">
+        <!-- Section tittle -->
+        
+        <div class="row">
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="single-popular-items mb-50 text-center">
+                    <div class="popular-img" href="{% url 'cart' %}">
+                        <img src="{%static 'img/gallery/popular1.png'%}" alt="">
+                        <div class="img-cap">
+                            <span><a href="{% url 'home' %}">Add to cartt</a></span>
+                        </div>
+                        <div class="favorit-items">
+                            <span class="flaticon-heart"></span>
+                        </div>
+                    </div>
+                    <div class="popular-caption">
+                        <h3><a href="{% url 'home' %}">Thermo Ball Etip Gloves</a></h3>
+                        <span>$ 45,743</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="single-popular-items mb-50 text-center">
+                    <div class="popular-img">
+                        <img src="{% static 'img/gallery/popular2.png'%}" alt="">
+                        <div class="img-cap">
+                            <span>Add to cart</span>
+                        </div>
+                        <div class="favorit-items">
+                            <span class="flaticon-heart"></span>
+                        </div>
+                    </div>
+                    <div class="popular-caption">
+                        <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
+                        <span>$ 45,743</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="single-popular-items mb-50 text-center">
+                    <div class="popular-img">
+                        <img src="{% static 'img/gallery/popular3.png'%}" alt="">
+                        <div class="img-cap">
+                            <span>Add to cart</span>
+                        </div>
+                        <div class="favorit-items">
+                            <span class="flaticon-heart"></span>
+                        </div>
+                    </div>
+                    <div class="popular-caption">
+                        <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
+                        <span>$ 45,743</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="single-popular-items mb-50 text-center">
+                    <div class="popular-img">
+                        <img src="{% static '/img/gallery/popular4.png'%}" alt="">
+                        <div class="img-cap">
+                            <span>Add to cart</span>
+                        </div>
+                        <div class="favorit-items">
+                            <span class="flaticon-heart"></span>
+                        </div>
+                    </div>
+                    <div class="popular-caption">
+                        <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
+                        <span>$ 45,743</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="single-popular-items mb-50 text-center">
+                    <div class="popular-img">
+                        <img src="{% static '/img/gallery/popular5.png'%}" alt="">
+                        <div class="img-cap">
+                            <span>Add to cart</span>
+                        </div>
+                        <div class="favorit-items">
+                            <span class="flaticon-heart"></span>
+                        </div>
+                    </div>
+                    <div class="popular-caption">
+                        <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
+                        <span>$ 45,743</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                <div class="single-popular-items mb-50 text-center">
+                    <div class="popular-img">
+                        <img src="{% static '/img/gallery/popular6.png'%}" alt="">
+                        <div class="img-cap">
+                            <span>Add to cart</span>
+                        </div>
+                        <div class="favorit-items">
+                            <span class="flaticon-heart"></span>
+                        </div>
+                    </div>
+                    <div class="popular-caption">
+                        <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
+                        <span>$ 45,743</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Button -->
+        <div class="row justify-content-center">
+            <div class="room-btn pt-70">
+                <a href="catagori.html" class="btn view-btn1">View More Products</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% comment %} <div class="container">
+    <div class="row move-right">
+      <div class="col-md-3">
+        <h3>Filters</h3>
+        <div class="list-group">
+          <h5>Category</h5>
+    {% for cat in cats%}
+    <li class="list-group-item">
+        <input value="{{cat.category__id}}" type="checkbox" /> &nbsp;
+        {{cat.category__name}}
+    </li>
+    
+    {%endfor%}
+          
+        </div>
+        <div class="list-group">
+          <h5>Brand</h5>
+          {% for brand in brands%}
+          <li class="list-group-item">
+              <input  value="{{brands.brand__id}}" type="checkbox" /> &nbsp;
+              {{brand.brand__name}}
+          </li>
+          
+          {%endfor%}
+        </div>
+        <div class="list-group">
+          <h5>Color</h5>
+          {% for color in colors%}
+          <li class="list-group-item">
+              <input  value="{{brands.brand__id}}" type="checkbox" /> &nbsp;
+              <button class="btn" style="background-color:{{color.color__color_code}}"></button>
+              
+          </li>
+          
+          {%endfor%}
+        </div> 
+        <div class="list-group">
+          <h5>Price Range</h5>
+          <a href="#" class="list-group-item">Below $50</a>
+          <a href="#" class="list-group-item">$50 - $100</a>
+          <a href="#" class="list-group-item">$100 - $200</a>
+          <a href="#" class="list-group-item">$200 and above</a>
+        </div>
+        <div class="list-group">
+          <h5>Rating</h5>
+          <a href="#" class="list-group-item">4 stars & above</a>
+          <a href="#" class="list-group-item">3 stars & above</a>
+          <a href="#" class="list-group-item">2 stars & above</a>
+          <a href="#" class="list-group-item">1 star & above</a>
+        </div>
+        <!-- Add more filter fields here -->
+      </div>
+      <div class="col-md-9">
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+          <div class="row">
+            {% for product in products %}
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 ">
+              <div class="single-popular-items mb-50 text-center">
+                <div class="popular-img product-item">
+                  <img src="{{product.product_image.url}}" alt="" class=" product-item">
+                  <div class="img-cap">
+                    <span>Add to cart</span>
+                  </div>
+                  <div class="favorit-items">
+                    <span class="flaticon-heart"></span>
+                  </div>
+                </div>
+                <div class="popular-caption">
+                  <h3><a href="product_details.html">{{product.name}}</a></h3>
+                  <span>{{product.original_price}}</span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> {% endcomment %}
+  {% endblock  %}

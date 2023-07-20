@@ -1,0 +1,38 @@
+
+{% extends 'user_templates/base.html' %}
+
+ {% load static %}
+
+ {% block content %}
+<div class="col-lg-9 ">
+    <div class="d-flex justify-content-between">
+    <h2 class="mb-5">Address Section</h2>
+    <div></div>
+    <a style="background-color:#7a8ce2; color:white;" class="btn_2" href="{% url 'add_address' %}">Add Address</a>
+    <div></div>
+    </div>
+    <div class="address-change">
+    {% for address in addresses %}
+    <div class="card address{{address.id}} address-changes" style="box-shadow: 20px 20px 10px grey;
+    margin: 20px 0;">
+      <div class="card-body">
+        <h5 class="card-title">Address Book {{address.id}}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{address.phone_number}}</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{address.email}}</h6>
+        <p class="card-text"> {{address.city}}, {{address.district}}, {{address.state}}, {{address.country}},{{address.pincode}}</p>
+        <a href="{% url 'delete_address' address.id %}" class="genric-btn danger circle mt-4 ">Delete</a>
+        {% if not address.status %}
+        <button data-address = "{{address.id}}" class="genric-btn info circle mt-2 activate-address add{{address.id}}">Activate</button>
+        
+        {% else %}
+        <div class="card-footer activated{{address.id}}">
+          <i class="fa fa-check-circle text-success mt-3 check tick{{address.id}}"></i>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</div>
+{% endblock %}

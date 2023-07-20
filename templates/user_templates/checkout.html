@@ -1,0 +1,180 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+    <main>
+        <!-- Hero Area Start-->
+        <div class="slider-area ">
+            <div class="single-slider slider-height2 d-flex align-items-center" style="margin-bottom:50px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap text-center">
+                                <h2>Checkout</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--================Checkout Area =================-->
+        <section class="checkout_area ">
+          <div class="container">
+
+            <div class="billing_details">
+              <div class="row">
+                <div class="col-lg-6">
+                  <h3>Address Details</h3>
+                      <!-- <div class="colorlib-form"> -->
+                        
+                              <div class="row">
+                        
+          
+                              <div class="col-md-12">
+                                  <!-- <div class="form-group"> -->
+                          <form id="addressForm">
+                          {% if address %}
+                          {% for ads in address %}
+                          
+                          <h2>{{ads.name}},</h2>
+                          <h6>{{ads.house_name}}, {{ads.address_line_1}}, {{ads.city}},<br> {{ads.state}}, Pincode: {{ads.pincode}}, {{ads.country}}, Phone number: {{ads.phone}}</h6>
+                          <a href="{% url 'edit_addresss' ads.id %}" class="mb-5 "><i style="font-size:24px" class="fa">&#xf044;</i>
+                          </a>
+                          <a href="{% url 'del_address' ads.id %}"><i class="material-icons">&#xe872;</i></a>
+                           <a href="{% url 'payment' ads.id %}" class="btn btn-success">Select</a> 
+                          {% endfor %}
+          
+                          {% else %}
+                          <h2>Your Address Is Empty.</h2>
+                          {% endif %}
+                          </form>
+                                      
+                                  <!-- </div> -->
+                               </div>
+                          <div class="col-md-12">
+                            <a href="{% url 'Add_address' %}" class="btn btn-primary btn-sm mt-5">Add Address</a>
+                          </div>
+                             </div>
+                      <!-- </div> -->
+                    </div>
+
+                  {% comment %} <form class="row contact_form" action="{%url 'place_order'%}" method="post"> {% endcomment %}
+                  {% comment %} {% csrf_token %}
+                    <div class="col-md-6 form-group p_star">
+                      <label for="">First Name</label>
+                      <input type="text" class="form-control" id="first" name="first_name" required>
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      <label for="">Last Name</label>
+                      <input type="text" class="form-control" name="last_name" required>
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      <label for="">Phone Number</label>
+                      <input type="text" class="form-control" id="number" name="phone" placeholder="phone number" required >
+                    </div>
+                    <div class="col-md-6 form-group p_star">
+                      <label for="">Email</label>
+                      <input type="text" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="col-md-12 form-group p_star">
+                      <label for="">Address Line 1 </label>
+                      <input type="text" class="form-control" id="add1" name="address_line_1" required>
+                    </div>
+                    <div class="col-md-12 form-group p_star">
+                      <label for="">Address Line 2</label>
+                      <input type="text" class="form-control" id="add2" name="address_line_2" required>
+                    </div>
+                    <div class="col-md-4 form-group p_star">
+                      <label for="" >City</label>
+                      <input type="text" class="form-control" id="city" name="city" required>
+                    </div>
+                    <div class="col-md-4 form-group p_star">
+                      <label for="">State</label>
+                      <input type="text" class="form-control" id="state" name="state" required>
+                    </div>
+                    <div class="col-md-4 form-group p_star">
+                      <label for="">Country</label>
+                      <input type="text" class="form-control" id="country" name="country" required>
+                    </div>
+                     <div class="col-md-12 form-group">
+                      <div class="creat_account">
+                        <input type="checkbox" id="f-option2" name="selector" >
+                        <label for="f-option2">Create an account?</label>
+                      </div>
+                    </div>
+                    <div class="col-md-12 form-group">
+                       <div class="creat_account">
+                        <h3>Shipping Details</h3>
+                        <input type="checkbox" id="f-option3" name="selector" />
+                        <label for="f-option3">Ship to a different address?</label>
+                      </div> 
+                      <textarea class="form-control" name="message" id="message" rows="1"
+                        placeholder="Order Notes"></textarea>
+                    </div>
+                  
+                </div> {% endcomment %}
+                <div class="col-lg-6">
+                  <div class="order_box">
+                    <h2>Your Order</h2>
+                    
+                      <div class="table-responsive">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Product</th>
+                              <th scope="col">Quantity</th>
+                              <th scope="col">Price</th>
+                              <th scope="col">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {% for cart_item in cart_items %}
+                          
+                            <tr>
+                              <td>
+                                <div class="media">
+                                  <div class="d-flex">
+                                    <img src="{{cart_item.product.product_image.url}}" alt="" style="width: 100px; height: 100px;">
+                                  </div>
+                                  <div class="media-body">
+                                    <p><a href="{{ cart_item.product.get_url }}" class="title text-dark"> <b> {{cart_item.product.name}} </b></a></p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: center;">
+                                <div class="product_count ">
+                                  {{cart_item.quantity}}
+                                </div>
+                              </td>
+                              <td>
+                                <h5>{{cart_item.product.offer_price}}</h5>
+                              </td>
+                             
+                              <td>
+                                <h5><b> {{total}} </b></h5>
+                              </td>
+                            </tr>
+                          
+                     
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                          {% comment %} <div>
+                            <button type="submit" name="submit"class="btn btn-primary btn-lg btn-block mt-3" >Place Order</button>
+                          </div> {% endcomment %}
+                          <div>
+                            <a href="{%url 'shop'%}" class="btn btn-secondary btn-lg btn-block mt-3">Continue Shopping</a>
+                          </form>
+                          </div> 
+                        </div>
+                      </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--================End Checkout Area =================-->
+    </main>
+
+
+    
+    {% endblock  %}

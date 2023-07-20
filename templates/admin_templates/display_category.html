@@ -1,0 +1,55 @@
+{% extends 'admin_templates/sidebar2.html' %}
+
+
+
+{% block content %}
+
+
+
+
+
+<div class="container mt-5">
+    <div class="row ">
+        <div class="col-lg-8 mx-auto">
+    <div class="bg-secondary rounded h-100 p-4 ">
+        <h6 class="mb-4">Categoy Table</h6>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Category Name</th>
+                        <th scope="col">Category Image</th>
+                        <th scope="col">Category Description</th>
+                        <th scope="col">Options</th>
+                        
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in categories %}
+                    <tr>
+                        <th scope="row">{{product.id}}</th>
+                        
+                        <td>{{product.name}}</td>
+                        <td><img src="{{product.image.url}}" alt="" style="width:60px; heigh:60px;"></td>
+                        <td>{{product.description}}</td>
+                        
+                        <td><a href=" {% url  'update_category' product.id  %}" class="btn btn-light">Update</a></td>
+                        <td><a href="{% url 'delete_category' product.id %}" class="btn btn-danger">Delete</a></td>
+                        
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+    <a href="add_category" class="btn btn-primary">Add Category</a>
+    </div>
+    </div>
+    
+    </div>
+
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+
+
+  <main>
+      <!-- Hero Area Start-->
+      <div class="slider-area ">
+          <div class="single-slider slider-height2 d-flex align-items-center">
+              <div class="container">
+                  <div class="row">
+                      <div class="col-xl-12">
+                          <div class="hero-cap text-center">
+                              <h2>Wish List</h2>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <!--================Cart Area =================-->
+      <section class="cart_area section_padding">
+        <div class="container">
+
+    {% if not wishlist %}
+     <h2 class="text-center">Your Wishlist is empty</h2>
+     <br>
+     <div class="text-center">
+      <a href="{% url 'shop'%}" class="btn_1">Continue shopping</a>
+     </div>
+    {% else %}
+          <div class="cart_inner">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Offer Price</th>
+                    <th scope="col">Action</th>
+
+
+                  </tr>
+                </thead>
+                <tbody>
+                {% for product in products %}
+                  <tr>
+                    <td>
+                      <div class="media">
+                        <div class="d-flex">
+                          <img src="{{product.product_image.url}}" alt="" />
+                        </div>
+                        <div class="media-body">
+                          <p><a href="{{ cart_item.product.get_url }}" class="title text-dark"> <b> {{product.name}} </b></a></p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                        <h5> <s>${{product.original_price}}</s></h5>
+                      </td>
+                    <td>
+                      <h5 style="color:red">${{product.offer_price}}</h5>
+                    </td>
+                    <td>
+                     <a href="{%url 'add_cart' product.id  %}"  class="btn btn-primary">Add to Cart</a>
+
+                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeProductModal">Remove</button>
+                      <!-- Remove Product Modal -->
+                      <div class="modal fade" id="removeProductModal" tabindex="-1" role="dialog" aria-labelledby="removeProductModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                              <h5 class="modal-title" id="removeProductModalLabel" ><b style="color:white">Confirm Removal</b></h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Are you sure you want to remove this product?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn_1" data-dismiss="modal">Cancel</button>
+                              <a class="btn_1" href="{% url 'remove_from_wishlist' product.id %}" >Remove</a>
+                             
+                            </td>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+ 
+                            {% comment %} modal end {% endcomment %}
+                          
+
+                            </div>
+                          </div>
+
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="checkout_btn_inner float-right">
+                <a class="btn_1" href="{% url 'shop'%}">Continue Shopping</a>
+                
+              </div>
+            </div>
+
+            {% endif %}
+          </div>
+      </section>
+      <!--================End Cart Area =================-->
+  </main>
+
+  {% endblock %}

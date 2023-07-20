@@ -1,0 +1,394 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+  .error-message {
+    color: red;
+    /* Add any additional styling you want for the error message */
+  }
+</style>
+
+  <main>
+      <!-- Hero Area Start-->
+      <div class="slider-area ">
+          <div class="single-slider slider-height2 d-flex align-items-center">
+              <div class="container">
+                  <div class="row">
+                      <div class="col-xl-12">
+                          <div class="hero-cap text-center">
+                              <h2>Cart List</h2>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <!--================Cart Area =================-->
+      <section class="cart_area section_padding">
+        <div class="container">
+
+    {% if not cart_items %}
+     <h2 class="text-center">Your shopping Cart is empty</h2>
+     <br>
+     <div class="text-center">
+      <a href="{% url 'shop'%}" class="btn_1">Continue shopping</a>
+     </div>
+    {% else %}
+    <div >
+     
+          <div class="cart_inner">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for cart_item in cart_items %}
+                  <tr>
+                    <td>
+                      <div class="media">
+                        <div class="d-flex">
+                          <img src="{{cart_item.product.product_image.url}}" alt="" />
+                        </div>
+                        <div class="media-body">
+                          <p><a href="{{ cart_item.product.get_url }}" class="title text-dark"> <b> {{cart_item.product.name}} </b></a></p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <h5>₹{{cart_item.product.offer_price}}</h5>
+                    </td>
+                    <td>
+                       <div class="product_count" >
+                        <a class="entry value-minus" data-id="{{ cart_item.id }}" data-action="decrease"> <i class="fas fa-minus"></i></a>
+                        <div class="entry  value" data-id="{{ cart_item.id }}"><span class="cart_item_quantity error-message" id="error-message">{{ cart_item.quantity }}</span></div>
+                        <a  class="entry value-plus active" data-id="{{ cart_item.id }}" data-action="increase"> <i class="fas fa-plus"></i> </a>
+                      </div> 
+
+                      {% comment %} <div class="entry value-minus" data-id="{{ cart_item.id }}" data-action="decrease">&nbsp;</div>
+                      <div class="entry  value" data-id="{{ cart_item.id }}"><span class="cart_item_quantity">{{ cart_item.quantity }}</span></div>
+                      <div class="entry value-plus active" data-id="{{ cart_item.id }}" data-action="increase">&nbsp;</div> {% endcomment %}
+
+                      
+                    </td>
+                    <td class="total" data-id="{{cart_item.id}}">
+                      <h5><span class="sub_total"><b>₹{{cart_item.sub_total}} </b></span></h5>
+                    </td>
+                    <td>
+                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeProductModal">Remove</button>
+                      <!-- Remove Product Modal -->
+                      <div class="modal fade" id="removeProductModal" tabindex="-1" role="dialog" aria-labelledby="removeProductModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                              <h5 class="modal-title" id="removeProductModalLabel" ><b style="color:white">Confirm Removal</b></h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Are you sure you want to remove this product?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn_1" data-dismiss="modal">Cancel</button>
+                              <a class="btn_1" href="{% url 'remove_cart_item' cart_item.product.id %}" >Remove</a>
+
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+ 
+                            {% comment %} modal end {% endcomment %}
+                          
+
+                            </div>
+                          </div>
+
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  <tr>
+                    <td></td>
+                    <td>
+                      <div class="cart__discount">
+                        <h4>Apply Coupon</h4>
+                          
+                          <input type="text" name="coupon" id="coupon" placeholder="Coupon code" style="padding: 5px; border: 1px solid #ccc;height:45px;">
+                          
+                          
+                          <button id="apply-coupon-button" style='background-color: rgb(83, 75, 201); color: #fff; border: none; padding: 10px 20px; margin-left: 5px; margin-top:10px'>Apply</button>
+                          <h6 id="coupon-id" style="padding-top:1rem;"></h6>
+                
+                      </div>
+
+                    </td>
+                    <td>
+                      <h5>Total</h5>
+                      <h5 class="pt-3">tax</h5>
+                      <h5 class="pt-3">Subtotal</h5>
+
+
+                    </td>
+                    <td>
+                      <h5><span class="sub_total total" data-id="{{cart_item.id}}"><b> ₹{{cart_item.sub_total}} </b></span></h5>
+                      <h5 class="pt-3">₹{{tax}}</h5>
+                      <h5 class="pt-3"> <b ><span id="cart_total">{{cart_total}}</span> </b> </h5>
+
+
+                    </td>
+                  </tr>
+                  {% comment %} <tr class="shipping_area">
+                    <td></td>
+                    <td></td>
+                    <td>
+                      <h5>Shipping</h5>
+                    </td>
+                    <td>
+                      <div class="shipping_box">
+                        <ul class="list">
+                          <li>
+                            Flat Rate: $5.00
+                            <input type="radio" aria-label="Radio button for following text input">
+                          </li>
+                          <li>
+                            Free Shipping
+                            <input type="radio" aria-label="Radio button for following text input">
+                          </li>
+                          <li>
+                            Flat Rate: $10.00
+                            <input type="radio" aria-label="Radio button for following text input">
+                          </li>
+                          <li class="active">
+                            Local Delivery: $2.00
+                            <input type="radio" aria-label="Radio button for following text input">
+                          </li>
+                        </ul>
+                        <h6>
+                          Calculate Shipping
+                          <i class="fa fa-caret-down" aria-hidden="true"></i>
+                        </h6>
+                        <select class="shipping_select">
+                          <option value="1">Bangladesh</option>
+                          <option value="2">India</option>
+                          <option value="4">Pakistan</option>
+                        </select>
+                        <select class="shipping_select section_bg">
+                          <option value="1">Select a State</option>
+                          <option value="2">Select a State</option>
+                          <option value="4">Select a State</option>
+                        </select>
+                        <input class="post_code" type="text" placeholder="Postcode/Zipcode" />
+                        <a class="btn_1" href="#">Update Details</a>
+                      </div>
+                    </td>
+                  </tr> {% endcomment %}
+                </tbody>
+              </table>
+              <div class="checkout_btn_inner float-right">
+                <a class="btn_1" href="{% url 'shop'%}">Continue Shopping</a>
+                <a class="btn_1 checkout_btn_1" href="{%url 'Checkout'%}">Proceed to checkout</a>
+              </div>
+            </div>
+
+            {% endif %}
+          </div>
+      </section>
+      <!--================End Cart Area =================-->
+  </main>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+  {% comment %} old script for cart item updation {% endcomment %}
+
+  <script>
+    $(document).ready(function() {
+      // Increment product quantity
+      $('.input-number-increment').click(function(event) {
+        event.preventDefault();
+        var url = $(this).attr('href');
+        var clickedElement = $(this);
+    
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'json',
+          success: function(response) {
+            if (response.success) {
+              // Update the value of the input field
+              var inputField = clickedElement.siblings('.input-number');
+              inputField.val(response.quantity);
+    
+              // Update the subtotal
+              var subtotalField = clickedElement.closest('td').siblings().find('h5 b');
+              subtotalField.text('$' + response.subtotal);
+            } else {
+              alert('Error: ' + response.message);
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert('Error: ' + xhr.status + ' ' + thrownError);
+          }
+        });
+      });
+    
+      // Decrement product quantity
+      $('.input-number-decrement').click(function(event) {
+        event.preventDefault();
+        var url = $(this).attr('href');
+        var clickedElement = $(this);
+    
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'json',
+          success: function(response) {
+            if (response.success) {
+              // Update the value of the input field
+              var inputField = clickedElement.siblings('.input-number');
+              inputField.val(response.quantity);
+    
+              // Update the subtotal
+              var subtotalField = clickedElement.closest('td').siblings().find('h5 b');
+              subtotalField.text('$' + response.subtotal);
+            } else {
+              alert('Error: ' + response.message);
+            }
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert('Error: ' + xhr.status + ' ' + thrownError);
+          }
+        });
+      });
+    });
+    
+    </script>
+
+    {% comment %} script for applying copoun for our products {% endcomment %}
+    <script>
+      function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+        }
+      }
+      return cookieValue;
+      }
+       $(document).ready(function() {
+      $(document).on('click', '#apply-coupon-button', function() {
+        applyCoupon();
+      });
+
+      });
+      
+      function applyCoupon() {
+      console.log("button clicked");
+      var url = "{% url 'apply_coupon' %}";
+      var csrfToken = getCookie('csrftoken');
+      var coupon = $('#coupon').val();
+      console.log(coupon);
+      console.log("hii");
+      var couponId = $('#coupon-id');
+      console.log(couponId);
+      
+      var totalPrice = parseInt($('#cart_total').text().replace('₹ ', ''));
+
+      console.log(totalPrice);
+      
+      $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        headers: {
+        'Content-type': 'application/json',
+        'X-CSRFToken': csrfToken
+        },
+        data: JSON.stringify({
+        coupon: coupon,
+        total_price: totalPrice
+        }),
+        success: function(response) {
+        if (response) {
+          couponId.html(response.message);
+          $('#cart_total').text('₹ ' + response.total);
+        }
+        },
+        error: function() {
+        console.log('Error');
+        }
+      });
+      }
+    </script>
+
+
+  {% comment %} script for cart item updation  {% endcomment %}
+
+ <script>
+  $('.value-plus').on('click', function() {
+    var cartItemId = $(this).data('id');
+    var action = $(this).data('action');
+    updateCartItemQuantity(cartItemId, action);
+  });
+
+  $('.value-minus').on('click', function() {
+    var cartItemId = $(this).data('id');
+    var action = $(this).data('action');
+    updateCartItemQuantity(cartItemId, action);
+  });
+
+  function updateCartItemQuantity(cartItemId, action) {
+    $.ajax({
+      url: "{% url 'update_cart_item_quantity' %}",
+      method: 'GET',
+      data: {
+        cart_item_id: cartItemId,
+        action: action
+      },
+      success: function(response) {
+        if (response.status === 200) {
+          // Update the quantity value in the template
+          var quantitySpan = $('.value[data-id="' + cartItemId + '"] span');
+          quantitySpan.text(response.quantity);
+
+          // Update the total price in the template
+          var totalSpan = $('.total[data-id="' + cartItemId + '"] span');
+          totalSpan.text(response.subtotal);
+          
+        } else if (response.status === 400) {
+          // Display error message
+          var errorMessage = response.error;
+          // Show the error message in your desired element, for example:
+          $('#error-message').text(errorMessage);
+        }
+      },
+      error: function(xhr, textStatus, error) {
+        // Display a generic error message
+        var errorMessage = "An error occurred. Please try again.";
+        // Show the error message in your desired element, for example:
+        $('#error-message').text(errorMessage);
+      }
+    });
+  }
+</script>
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+ 
+  {% endblock %}

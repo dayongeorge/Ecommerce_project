@@ -1,0 +1,65 @@
+{% extends 'authentication/base.html' %}
+
+
+{% block content%}
+
+<div class="row ">
+    <div class="col-sm-1 card-body">
+    <a href="{% url 'Admin_signout'%}"class="btn btn-info">Logout</a>
+
+    </div>
+    <div class="col-sm-11 card-body">
+        <form action="{% url 'search'%}" class="d-none d-md-flex input-group w-auto my-auto" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark btn-outline-success" ><i class="fa fa-search " aria-hidden="true"  style="color:#FFFFFF;"></i></button>
+            <input autocomplete="off" type="tesxt" required="" class='form-control rounded' id="search" name="query" placeholder="Search" aria-label="search"  style="min-width: 125px;">
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <h4 class="text-center alert alert-info"> ADD USER</h4>
+        <form action="" method ="post">
+            {% csrf_token %}
+            {{fm.as_p}}
+            <input type="submit" class="btn btn-success" value="Add">
+        </form>
+    </div>
+    <div class="col-sm-8">
+        <h4 class="text-center alert alert-info"> USER INFORMATION</h4>
+
+        <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">USEERNAME</th>
+                <th scope="col">FIRSTNAME</th>
+                <th scope="col">LASTNAME</th>
+                <th scope="col">EMAIL</th>
+                
+                <th scope="col">ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+        {%for s in stu%}
+              <tr>
+                <th scope="row">{{s.id}}</th>
+                <td>{{s.username}}</td>
+                <td>{{s.first_name}}</td>
+                <td>{{s.last_name}}</td>
+                <td>{{s.email}}</td>
+
+                <td>
+                    <a href="{% url 'update_data' s.id%}" class="btn btn-warning btn-sm" >Edit</a>
+                    <form action="{% url 'delete_data' s.id %}" method="post" class="d-inline">{% csrf_token %}
+                        <input type="submit" class="btn btn-danger" value="Delete">
+
+                    </form>
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock content%}

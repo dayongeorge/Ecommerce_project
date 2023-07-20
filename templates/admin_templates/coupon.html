@@ -1,0 +1,49 @@
+
+{% extends 'admin_templates/sidebar2.html' %}
+
+{% block content%}
+<main>
+    <div class="container-fluid px-4">
+        <h1 class="mt-4">Coupon Management</h1>
+        <div class="row">
+            <div class="col-lg-3 ms-5 mt-3">
+            <a href="{% url 'add_coupon' %}" class="btn btn-primary btn-sm">Add Product</a>
+            </div>
+        </div>
+        <div class="row">
+        <div class="col-md-8 ms-5 mt-3">
+            <table class="table caption-top">
+                <!-- <caption>List of categories</caption> -->
+                <thead>
+                  <tr>
+                    <th scope="col">Coupon Code</th>
+                    <th scope="col">Discount Price</th>
+                    <th scope="col">Minimum Amount</th>
+                    <th scope="col">Is Expired</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for c in coupon %}
+                  <tr> 
+                    <th>{{c.coupon_code}}</th>
+                    <td>{{c.discount_price}}</td>
+                    <td>{{c.minimum_amount}}</td>
+                    <td>{{c.is_expired}}</td>
+                    <td>
+                        <a href="{% url 'edit_coupon' c.id %}" class="btn btn-warning " >Edit</a>
+                        <form action="{% url 'del_coupon' c.id %}" method="post" class="d-inline">{% csrf_token %}
+                        <input type="submit" class="btn btn-danger" value="Delete">
+                        </form>
+                    </td>  
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>                     
+       
+        </div>
+    </div>
+</main>
+
+{% endblock %}

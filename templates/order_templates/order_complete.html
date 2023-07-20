@@ -1,0 +1,59 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-8">
+        
+            <div class="text-center mb-4">
+              <img src="{%static 'arrow-images/order_complete_image.png'%}" alt="Order Complete" class="img-fluid" style="max-width: 30%;">
+            </div>
+            <div class="text-center">
+              <h5>Thank you for your order!</h5>
+              <p>Your order has been successfully placed.</p>
+            </div>
+            <div class="d-flex justify-content-center mb-5">
+                <a href="{% url 'shop' %}" class="btn btn-primary text-center">Shop More</a>
+              </div>
+              <div class="card">
+          
+                <div class="card-body">
+            <div class="card-header">
+                <div class="logo" >
+                    <a href="index.html"><img src="{% static '/img/logo/logo.png'%}" alt=""></a>
+                </div>
+                <h3 class="text-center">Order Invoice </h3>
+              </div>
+            <div class="text-center mt-4">
+              
+              <p>Order ID: #{{order_number}}</p>
+              <p>Transaction ID: #{{transID}}</p>
+             <p>Date: {{order.created_at}}</p>
+             <p>Status: {{payment.status}}</p>
+
+              <p>Total Amount: ${{amount_paid}}</p>
+            </div>
+            <div class="text-center mt-4">
+              <h5>Shipping Details</h5>
+              <p>{{order.full_name}}</p>
+              <p>{{order.address_line_1}}</p>
+              <p>{{order.state}},{{order.city}}</p>
+              <p>{{order.country}}</p>
+            </div>
+            <div class="text-center mt-4">
+              <h5>Contact Information</h5>
+              <p>Email: {{user.email}}</p>
+              <p>Phone: {{user.phone_number}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}

@@ -1,0 +1,294 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+
+<main>
+  <!-- Hero Area Start-->
+  <div class="slider-area">
+    <div class="single-slider slider-height2 d-flex align-items-center">
+      <div class="container">
+        <div class="row">
+          <div class="hero-cap text-center">
+            <h2>Review Your Order And Make Payment</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--================Cart Area =================-->
+
+  <section class="cart_area section_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-8">
+          <div class="card">
+            <h5 class="card-header">Billing Address</h5>
+            <div class="card-body">
+              <p class="card-text mb-2">{{order.full_name}}</p>
+              <p class="card-text mb-2">{{order.address_line_1}}</p>
+              <p class="card-text mb-2">{{order.city}}, {{order.state}}</p>
+              <p class="card-text mb-2">{{order.country}}</p>
+              <p class="card-text mb-2">{{order.email}}</p>
+              <p class="card-text mb-2">{{order.phone}}</p>
+              {% if order.order_note %}
+              <p><b>Order Note:</b> {{order.order_note}}</p>
+              {% endif %}
+            </div>
+          </div>
+
+
+          <div class="card">
+            <h5 class="card-header">Order Address</h5>
+            <div class="card-body">
+              <p class="card-text mb-2">{{user.username}}</p>
+              <p class="card-text mb-2">{{user.phone_number}}</p>
+              <p class="card-text mb-2">{{userprofile.address_line_1}}</p>
+              <p class="card-text mb-2">{{userprofile.city}}</p>
+              <p class="card-text mb-2">{{userprofile.state}}</p>
+              <p class="card-text mb-2">{{userprofile.country}}</p>
+              <div>
+                <a href="{%url 'edit_profile'%}" class="btn btn-primary">Edit Address</a>
+            </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h5 class="card-header">Payment Method</h5>
+            <div class="card-body">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="paypalPayment" value="paypal" checked>
+                <label class="form-check-label" for="paypalPayment">PayPal</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod">
+                <label class="form-check-label" for="cod">Cash on Delivery</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="paypalDetails">
+            <h5 class="card-header">Review Products</h5>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Product</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Quantity</th>
+                      <th scope="col">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cart_item in cart_items %}
+                    <tr>
+                      <td>
+                        <div class="media">
+                          <div class="d-flex">
+                            <img src="{{ cart_item.product.product_image.url }}" alt="" class="product-image" />
+                          </div>
+                          <div class="media-body">
+                            <p><a href="{{ cart_item.product.get_url }}" class="title text-dark"><b>{{ cart_item.product.name }}</b></a></p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <h5>{{ cart_item.product.offer_price }}</h5>
+                      </td>
+                      <td>
+                        {{cart_item.quantity}}
+                      </td>
+                      <td>
+                        <h5><b>{{ cart_item.sub_total }}</b></h5>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="codDetails" style="display: none;">
+            <h5 class="card-header">Cash on Delivery Details</h5>
+            <div class="card-body">
+              <p class="card-text">Please make sure you have the exact cash amount available when the delivery is made.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4">
+          <div class="cart_inner">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th>
+                      <h5>Total</h5>
+                      <h5 class="pt-3">Tax</h5>
+                      <h5 class="pt-3">Subtotal</h5>
+                    </th>
+                    <th>
+                      <h5>${{total}}</h5>
+                      <h5 class="pt-3">${{tax}}</h5>
+                      <h5 class="pt-3"> <b>${{grand_total}} </b> </h5>
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+
+            <div id="paypal-button-container"></div>
+
+            <button type="submit" class="btn btn-primary" id="codButton" style="display: none;">Confirm Order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--================End Cart Area =================-->
+</main>
+<script src="https://www.paypal.com/sdk/js?client-id=AfsbnQF09x07ZljWFjfk0GIPOEjeZ2Ndh5S5jgHUO5lNHf75K3KMNlu2Le0_jVSjQsdTRn5D7wG9xI8p&currency=USD"></script>
+
+<script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  var url = "{% url 'payments' %}";
+  var csrftoken = getCookie('csrftoken');
+  var orderID = "{{ order.order_number }}";
+  var payment_method = 'PayPal';
+  var redirect_url = "{% url 'order_complete' %}";
+
+  // Show/hide PayPal button and COD details based on payment method selection
+  var paymentMethodRadio = document.getElementsByName('paymentMethod');
+  var paypalContainer = document.getElementById('paypal-button-container');
+  var codDetails = document.getElementById('codDetails');
+  var codButton = document.getElementById('codButton');
+
+  // Event listeners for payment method selection
+  for (var i = 0; i < paymentMethodRadio.length; i++) {
+    paymentMethodRadio[i].addEventListener('change', function () {
+      if (this.value === 'paypal') {
+        paypalContainer.style.display = 'block';
+        codDetails.style.display = 'none';
+        codButton.style.display = 'none';
+      } else if (this.value === 'cod') {
+        paypalContainer.style.display = 'none';
+        codDetails.style.display = 'block';
+        codButton.style.display = 'block';
+      }
+    });
+  }
+
+  // PayPal configuration
+  paypal.Buttons({
+    createOrder: function (data, actions) {
+      return actions.order.create({
+        purchase_units: [
+          {
+            amount: {
+              currency_code: 'USD',
+              value: '{{ grand_total }}' // Replace with the actual total amount
+            }
+          }
+        ]
+      });
+    },
+    onApprove: function (data, actions) {
+      return actions.order.capture().then(function (details) {
+        console.log(details);
+        sendData();
+        // swal("Congratulations!", "Your Order Has Been Placed Successfully","success").then((value) =>{
+        //   window.location.href = "/shop/confirmation"
+        // })
+        function sendData() {
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({
+              orderID: orderID,
+              transID: details.id,
+              payment_method: payment_method,
+              status: completed,
+            }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+            });
+        }
+
+      });
+    }
+  }).render('#paypal-button-container');
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var codButton = document.getElementById('codButton');
+      codButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent form submission
+  
+        // Make AJAX request to the server to process the cash on delivery order
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url 'cash_on_delivery' %}', true);
+        xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            // Handle successful response
+            var response = JSON.parse(xhr.responseText);
+            console.log(response); // You can log or process the response data
+  
+            // Redirect the user to the order complete page
+            window.location.href = "{% url 'order_complete' %}" + '?order_number=' + response.order_number + '&payment_id=' + response.transID;
+          } else {
+            // Handle error response
+            console.error('An error occurred');
+          }
+        };
+  
+        // Send the AJAX request
+        xhr.send(JSON.stringify({ orderID: "{{ order.order_number }}" }));
+      });
+    });
+  
+    // Function to get the value of the CSRF token
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  
+  
+</script>
+
+{% endblock %}
