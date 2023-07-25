@@ -115,9 +115,9 @@
                             <h5 class="pt-3">Subtotal</h5>
                           </th>
                           <th>
-                            <h5>${{total1}}</h5>
-                            <h5 class="pt-3">${{tax}}</h5>
-                            <h5 class="pt-3"> <b>${{sum}} </b> </h5>
+                            <h5>₹{{total1}}</h5>
+                            <h5 class="pt-3">₹{{tax}}</h5>
+                            <h5 class="pt-3"> <b>₹{{sum}} </b> </h5>
                           </th>
                         </tr>
                       </thead>
@@ -133,6 +133,22 @@
   <a href="{% url 'place_order' id=address.id payment_method='COD'%}"><button type="button" class="btn btn-primary">
   Cash on Delivery </button></a>
 </div> 
+<div class="card mt-5">
+  <div class="card-body">
+    <h5 class="card-title">Wallet Balance</h5>
+    <p class="card-text">Your current wallet balance is: <b>₹ {{ wallet.balance }}</b></p>
+    <!-- Add any other relevant information or actions related to the wallet -->
+  </div>
+</div>
+{% if wallet.balance > sum %}
+<div class="mt-2">
+  <a href="{% url 'place_order' id=address.id payment_method='Wallet'%}"><button type="button" class="btn btn-warning">
+  Pay From WALLET </button></a>
+</div> 
+{% else %}
+<button type="button" class="btn btn-danger">
+  Insufficient Balance </button>
+{% endif %}
 
 <!-- Include the PayPal JavaScript SDK -->
 <script src="https://www.paypal.com/sdk/js?client-id=AfsbnQF09x07ZljWFjfk0GIPOEjeZ2Ndh5S5jgHUO5lNHf75K3KMNlu2Le0_jVSjQsdTRn5D7wG9xI8p&currency=USD"></script>

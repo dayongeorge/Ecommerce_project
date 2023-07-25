@@ -1,4 +1,5 @@
 import calendar
+import decimal
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render,redirect
 from django.http import HttpResponse, JsonResponse
@@ -20,6 +21,11 @@ from django.db.models.functions import ExtractMonth,ExtractDay,ExtractYear
 from django.db.models import Count
 from datetime import date
 from django.contrib.auth.decorators import login_required
+
+
+def generate_order_id():
+    return str(uuid.uuid4()).replace('-', '').upper()
+
 
 
 
@@ -108,8 +114,25 @@ class Checkout(View):
 
 
 
-def order_complete(request):
-    return render (request,'order_templates/order_complete.html')
+def order_complete(request,):
+    order_number = request.GET.get('order_number')
+    payment_id = request.GET.get('payment_id')
+    total_price = request.GET.get('total_price')
+    payment_method = request.GET.get('payment_method')
+    user=request.user
+    address_id=request.GET.get('address_id')
+    address = Address.objects.get(id=address_id)
+    # order_id = request.session.get('order_id')
+    # order = Order.objects.get(id=order_id)
+
+
+    return render (request,'order_templates/order_complete.html',{
+        'address':address,
+        'order_number': order_number,
+        'payment_id': payment_id,
+        'total_price': total_price,
+        'payment_method': payment_method
+        })
    
 
 
@@ -121,6 +144,11 @@ def payment(request, id):
     cart_items=CartItem.objects.filter(user=current_user)
     cart_count=cart_items.count()
     client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+    try:
+        wallet=Wallet.objects.get(user=request.user)
+    except:
+        wallet = Wallet.objects.create(user=request.user, balance=0)
+
     if cart_count <=0:
         return redirect('shop')
     total=0
@@ -139,6 +167,7 @@ def payment(request, id):
         print(grand_total)
         print(cart_items)
         context= {
+            'wallet':wallet,
             'cart_items': cart_items,
             'tax':tax,
             'total1':total,
@@ -157,10 +186,11 @@ class PlaceOrderView(View):
     def get(self, request, id,payment_method):
         # Retrieve user, address, and other necessary data from the request
         user = request.user
+        address_id=id
         address = Address.objects.get(id=id)
         payment_method = payment_method  
-        order_number="#1578641"
-        payment_id=str(uuid.uuid4()),
+        order_number=generate_order_id(),
+        payment_id=generate_order_id()
         status=''
         if payment_method=='Online':
             status='Success'
@@ -171,12 +201,21 @@ class PlaceOrderView(View):
         cart_items = CartItem.objects.filter(user=request.user)
         total_price=total_amount(request)
         grand_total=grand_totall(request)
+
+        if payment_method=='Wallet':
+            wallet = get_object_or_404(Wallet, user=user)
+
+            if wallet.balance >= total_price:
+                    wallet.balance -= total_price
+                    wallet.save()
+
         # total_price = calculate_cart_total(cart_items)
 
         # Create a new payment entry
         payment = Payment.objects.create(
             user=user,
             payment_method=payment_method,
+            payment_id=generate_order_id(),
             amount_paid=total_price, 
             status=status  # Set initial status to Pending
         )
@@ -186,12 +225,12 @@ class PlaceOrderView(View):
             user=user,
             payment=payment,
             address=address,
-            order_number='...',  
+            order_number=generate_order_id(), 
             order_note='...',  
             order_total=total_price,  
             tax=0.0,  
             status='New',  
-            ip='...', 
+            ip='192.158.1.38', 
             is_ordered=True  
         )
 
@@ -212,6 +251,7 @@ class PlaceOrderView(View):
             product = cart_item.product
             product.quantity -= cart_item.quantity
             product.save()
+
             
 
         # Clear the user's cart or order items
@@ -219,9 +259,13 @@ class PlaceOrderView(View):
         cart_items.delete()
         if 'total' in request.session:
             del request.session['total']
+        print("ordernum")
+        print(order_number)
 
         # Redirect to a success page or show a success message
-        return redirect('order_complete')
+        redirect_url = reverse('order_complete') + f'?order_number={order_number}&payment_id={payment_id}&total_price={total_price}&payment_method={payment_method}&address_id={address_id}'
+        return redirect(redirect_url)
+        # return redirect('order_complete')
     
 
 
@@ -282,36 +326,10 @@ def Paypal_payments(request):
     
 
 
-def order_complete(request):
-        # order_number=request.GET.get('order_number')
-        # transID=request.GET.get('payment_id')
-
-        # # if not order_number:
-        # #     order_number = request.session['order_number']
-        
-        # # if not transID: 
-        # #     transID = request.session['transID']
-
-        # # try:
-        # order=Order.objects.get(id=order_number,is_ordered=True)
-        # ordered_products=OrderProduct.objects.filter(order_id=order.id)
-        # payment=Payment.objects.get(payment_id=transID)
-        # amount_paid=payment.amount_paid
-        # context={
-        #         'order':order,
-        #         'ordered_products':ordered_products,
-        #         'order_number':order.order_number,
-        #         'transID':payment.payment_id,
-        #         'payment':payment,
-        #         'amount_paid':amount_paid,
-        #         'user': request.user,
-        #     }
-        return render(request,'order_templates/order_complete.html')
-    # except (Payment.DoesNotExist,Order.DoesNotExist):
-    #     return redirect('home')
 
 
-def admin_orders(request):
+
+def orders(request):
 
     orders = OrderProduct.objects.filter(user=request.user,ordered=False)
     context = {'orders': orders}
@@ -319,24 +337,56 @@ def admin_orders(request):
     return render(request,'user_templates/orders.html',context)  
 
 
-def cancel_order(request, order_id):
-    # Retrieve the order object
-    order = get_object_or_404(Order, id=order_id, user=request.user)
-    print(order.status)
 
-    if order.status != 'New':
-        # Check if the order can be canceled (e.g., if it's still pending)
-        messages.error(request, 'This order cannot be canceled.')
-        return redirect(reverse('orders'))
 
-    # Cancel the order
-    order.status = 'CANCELED'
-    order.save()
+def cancel_order(request,order_id):
+    print(order_id)
+    try:
+        
+            order = get_object_or_404(Order, pk=order_id, user=request.user)
+            orders = OrderProduct.objects.filter(order=order)
+            order.status = 'Cancelled'
+            # order.cancellation_reason = cancellation_reason
+            order.save()
+            if order.status == 'Cancelled':
+                for product in orders:
+                    product.quantity += product.quantity
+                    product.save()
 
-    # Add a success message
-    messages.success(request, 'Order has been canceled successfully.')
+                
 
-    return redirect(reverse('orders'))
+            if order.payment.payment_method =='Online':
+                wallet, _ =Wallet.objects.get_or_create(user=request.user)
+                refund_amount=decimal.Decimal(order.order_total)
+                print(refund_amount)
+                wallet.balance += refund_amount
+                wallet.save()
+
+    except Order.DoesNotExist:
+            pass
+    return redirect("orders")
+
+#order return function
+def return_order(request,order_id):
+    print(order_id)
+    if request.method=="POST":
+        return_reason=request.POST.get('return_reason')
+        try:
+            order = get_object_or_404(Order, pk=order_id, user= request.user)
+            order.status='Return'
+            # order.return_reason = return_reason
+            order.save()
+            if order.payment.payment_method == 'Online' or 'COD':
+                wallet, _ = Wallet.objects.get_or_create(user=request.user)
+                refund_amount = decimal.Decimal(order.order_total)
+                print(refund_amount)
+                wallet.balance += refund_amount
+                wallet.save()
+
+        except Order.DoesNotExist:
+            pass
+    return redirect('orders')
+
 
 
 @login_required(login_url='admin_login')
@@ -386,6 +436,8 @@ def admin_panel(request):
     for o in order_by_years:
         yearNumber.append(o['year'])
         totalOrdersYear.append(o['count'])
+    products=Product.objects.all()
+    canceled_products=Order.objects.filter(status='Cancelled')
     
     context ={
         'delivered_orders': delivered_orders,
@@ -403,9 +455,23 @@ def admin_panel(request):
         'delivered_orders_year': delivered_orders_year,
         'delivered_orders_year_number': delivered_orders_year_number,
         'delivered_orders_by_years': delivered_orders_by_years,
+        'products':products,
+        'canceled_products':canceled_products,
     }
     return render(request, 'admin_templates/report.html',context)
 
+
+
+def wallet(request):
+    try:
+        wallet = Wallet.objects.get(user=request.user)
+        user_profile =  UserProfile.objects.get( user=request.user)
+        
+        if wallet:
+            print(wallet.balance)
+    except:
+        wallet = Wallet.objects.create(user=request.user, balance=0)
+    return render(request,'user_templates/wallet.html',{'wallet':wallet,'userprofile': user_profile,})
 
 
 
@@ -449,10 +515,53 @@ def admin_panel(request):
 
 
 
+# def cancel_order(request, order_id):
+#     # Retrieve the order object
+#     order = get_object_or_404(Order, id=order_id, user=request.user)
+#     print(order.status)
+
+#     if order.status != 'New':
+#         # Check if the order can be canceled (e.g., if it's still pending)
+#         messages.error(request, 'This order cannot be canceled.')
+#         return redirect(reverse('orders'))
+
+#     # Cancel the order
+#     order.status = 'CANCELED'
+#     order.save()
+
+#     # Add a success message
+#     messages.success(request, 'Order has been canceled successfully.')
+
+#     return redirect(reverse('orders'))
 
 
+# def order_complete(request):
+        # order_number=request.GET.get('order_number')
+        # transID=request.GET.get('payment_id')
 
+        # # if not order_number:
+        # #     order_number = request.session['order_number']
+        
+        # # if not transID: 
+        # #     transID = request.session['transID']
 
+        # # try:
+        # order=Order.objects.get(id=order_number,is_ordered=True)
+        # ordered_products=OrderProduct.objects.filter(order_id=order.id)
+        # payment=Payment.objects.get(payment_id=transID)
+        # amount_paid=payment.amount_paid
+        # context={
+        #         'order':order,
+        #         'ordered_products':ordered_products,
+        #         'order_number':order.order_number,
+        #         'transID':payment.payment_id,
+        #         'payment':payment,
+        #         'amount_paid':amount_paid,
+        #         'user': request.user,
+        #     }
+        # return render(request,'order_templates/order_complete.html')
+    # except (Payment.DoesNotExist,Order.DoesNotExist):
+    #     return redirect('home')
 
 # def payments(request):
 #     body=json.loads(request.body)
@@ -620,257 +729,3 @@ def admin_panel(request):
 
 
 
-
-# from .forms import ReturnForm
-
-# def return_order(request, order_id):
-#     # Retrieve the order object
-#     order = get_object_or_404(Order, id=order_id, user=request.user)
-    
-#     if order.status != 'New':
-#         # Check if the order can be returned (e.g., if it's still in an accepted state)
-#         messages.error(request, 'This order cannot be returned.')
-#         return redirect(reverse('orders'))
-
-#     if request.method == 'POST':
-#         form = ReturnForm(request.POST)
-#         if form.is_valid():
-#             reason = form.cleaned_data['reason']
-            
-#             # Save the reason for return in the database
-#             Return.objects.create(order=order, reason=reason)
-            
-#             # Update the order status to "Return Processing"
-#             order.status = 'Return Processing'
-#             order.save()
-            
-#             messages.success(request, 'Return request has been submitted successfully.')
-#             return redirect(reverse('orders'))
-#     else:
-#         form = ReturnForm()
-    
-#     return render(request, 'return_order.html', {'order': order, 'form': form})
-
-
-
-
-
-
-
-# class place_order(View):
-
-#         def dispatch(self, request, *args, **kwargs):
-#                 # Declare and assign instance attributes
-                
-#                 self.flag = 0
-#                 print("place")
-#                 self.current_user = request.user
-#                 print(self.current_user)
-
-#                 self.cart = Cart.objects.get(user=self.current_user)
-#                 self.cart_items = CartItem.objects.filter(user=self.current_user)
-#                 self.cart_count = self.cart_items.count()
-                
-#                 self.total_price = self.cart.get_total_price()
-#                 print(self.cart_count)
-#                 self.default_address_id = None
-#                 # Call the default dispatch method
-#                 return super().dispatch(request, *args, **kwargs)
-                        
-                
-            
-#         def get(self,request):
-            
-            
-#           # if cart count is less than or equal to zero redirect back to homepage
-#             if self.cart_count <= 0:
-#                     return redirect('home')
-#             else:
-#                 print("else")
-#                 try:
-#                         current_order = Order.objects.get(user=self.current_user)
-#                         print(current_order,"current")
-#                         if current_order:
-#                                 data = self.current_order
-#                         else:
-#                                 raise Exception("order not formed")
-#                 except Exception as e:
-#                         print("exception")
-#                         data = Order()
-#                         print(data)
-
-                        
-#                         data.user = self.current_user
-#                         selected_option = request.GET.get('selectedOption')
-#                         payment_method_mapping = {
-#                                         'cod': 'COD',
-#                                         'razorpay': 'Razorpay',
-#                                         # Add more mappings as needed
-#                                 }
-#                         print(selected_option)
-#                         payment_method_selected = payment_method_mapping.get(selected_option)
-#                         # status =''
-#                         # if payment_method_selected == 'COD':
-#                         #         status = 'Pending'
-#                         # else:
-#                         #         status = 'Success'
-
-#                         print(payment_method_selected)
-#                         if selected_option == 'cod':
-#                                 print("first one")
-#                                 payment_method = Payment.objects.create(user=self.current_user,payment_method=payment_method_selected,amount_paid=self.total_price,status="Pending")
-                                
-#                                 data.payment = payment_method
-                                
-#                                 self.default_address_id = request.GET.get('defaultAddressId')
-#                                 print(self.default_address_id)
-#                                 data.shipping_address =  Address.objects.get(id=self.default_address_id)
-#                                 print(data.shipping_address)
-#                                 data.order_total = self.total_price
-#                                 print(data.user,data.payment,data.shipping_address,data.order_total)
-#                                 data.save()
-#                                 print(data)
-#                                 # generate order number
-#                                 yr = int(datetime.date.today().strftime('%Y'))
-#                                 dt = int(datetime.date.today().strftime('%d'))
-#                                 mt = int(datetime.date.today().strftime('%m'))
-#                                 d = datetime.date(yr,mt,dt)
-#                                 current_date = d.strftime("%Y%m%d")
-#                                 order_number= current_date + str(data.id)
-#                                 data.order_number = order_number
-#                                 print(data.order_number,current_date)
-#                                 data.save()
-#                                 for item in self.cart_items:
-#                                         order = OrderProduct.objects.create(product=item.product,
-#                                                 variation=item.product_variant,
-#                                                 payment=payment_method,
-#                                                 order=data,
-#                                                 quantity=item.quantity,
-#                                                 product_price=item.product_variant.price,
-#                                                 user=self.current_user,
-#                                                 ordered=True)
-#                                         print(order)
-#                                         print(item.product.stock)
-#                                         product = item.product
-#                                         product.stock -= item.quantity
-#                                         print(item.product.stock)
-#                                         product.save()
-#                                         item.delete()
-#                                         flag = 1
-                                
-#                                 return JsonResponse({'message': 'Order placed successfully.','flag':flag})
-#                         elif selected_option == 'razorpay':
-#                                     print("elif")
-#                                     import razorpay
-#                                     client = razorpay.Client(auth=("rzp_test_9PWZXmd88RGOGY", "CMlBW52kdSRZWeoUu5Dlt3Qv"))
-                
-#                                     razorpay_order = client.order.create(
-#                                     {"amount": int(self.total_price), "currency": "INR", "payment_capture": "1"}
-#                                     )
-#                                     print(razorpay_order)
-                                    
-#                                     order_id = razorpay_order['id']
-                                    
-#                                     print(order_id)
-                                        
-
-#                                     payment_method = Payment.objects.create(user=self.current_user,payment_method=payment_method_selected,amount_paid=self.total_price,status="Success")
-                                        
-#                                     data.payment = payment_method
-                                        
-#                                     default_address_id = request.GET.get('defaultAddressId')
-#                                     data.shipping_address =  Address.objects.get(id=default_address_id)
-#                                     print(data.shipping_address)
-#                                     data.order_total = self.total_price
-#                                     print(data.user,data.payment,data.shipping_address,data.order_total)
-#                                     data.save()
-#                                     print(data)
-#                                     # generate order number
-#                                     yr = int(datetime.date.today().strftime('%Y'))
-#                                     dt = int(datetime.date.today().strftime('%d'))
-#                                     mt = int(datetime.date.today().strftime('%m'))
-#                                     d = datetime.date(yr,mt,dt)
-#                                     current_date = d.strftime("%Y%m%d")
-#                                     order_number= current_date + str(data.id)
-#                                     data.order_number = order_number
-#                                     print(data.order_number,current_date)
-#                                     data.save()
-#                                     for item in self.cart_items:
-#                                         order = OrderProduct.objects.create(product=item.product,
-#                                                 variation=item.product_variant,
-#                                                 payment=payment_method,
-#                                                 order=data,
-#                                                 quantity=item.quantity,
-#                                                 product_price=item.product_variant.price,
-#                                                 user=self.current_user,
-#                                                 ordered=True)
-#                                         print(order)
-#                                         item.delete()
-#                                         item.product.stock -= item.quantity
-                                    
-#                                 #     cart = Cart.objects.get(user=request.user)
-#                                 #     total_price = cart.get_total_price()
-#                                     payment_id = payment_method.id
-#                                     redirect_url = reverse('razorpay') + f'?total={self.total_price}&id={order_id}&order_number={order_number}&payment_id={payment_id}'
-    
-#                                     return JsonResponse({'message': 'razorpay entered.','redirect':redirect_url})
-
-
-
-
-
-# def cash_on_delivery(request):
-    
-#         order = Order.objects.get(user=request.user, is_ordered=False, order_number=request.POST.get('orderID'))
-        
-#         # Create a payment instance for cash on delivery
-#         payment = Payment(
-#             user=request.user,
-#             payment_id='COD',  # Set a custom payment ID for cash on delivery
-#             payment_method='Cash on Delivery',
-#             amount_paid=order.order_total,
-#             status='Paid'  # Assuming the cash on delivery payment is considered paid immediately
-#         )
-#         payment.save()
-
-#         # Update order and order product details
-#         order.payment = payment
-#         order.is_ordered = True
-#         order.save()
-
-#         cart_items = CartItem.objects.filter(user=request.user)
-
-#         for item in cart_items:
-#             orderproduct = OrderProduct(
-#                 order_id=order.id,
-#                 payment=payment,
-#                 user_id=request.user.id,
-#                 product_id=item.product_id,
-#                 quantity=item.quantity,
-#                 product_price=item.product.offer_price,
-#                 ordered=True
-#             )
-#             orderproduct.save()
-
-#             # Reduce the quantity of the sold products
-#             product = Product.objects.get(id=item.product_id)
-#             product.quantity -= item.quantity
-#             product.save()
-
-#         # Clear the cart
-#         CartItem.objects.filter(user=request.user).delete()
-
-#         # Send order received email to the customer
-
-#         # Send order number and transaction ID back to sendData method via JsonResponse
-#         # data = {
-#         #     'order_number': order.order_number,
-#         #     'transID': payment.payment_id,
-#         # }
-#         # return JsonResponse(data)
-
-
-#         # return to order complete page
-
-#         return redirect('order_complete')
-#     # return render(request, 'order_templates/payments1.html')

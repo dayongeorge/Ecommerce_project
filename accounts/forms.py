@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Address, CustomUser
+from .models import Address, CustomUser,UserProfile
 from phonenumber_field.formfields import PhoneNumberField
 
 
@@ -30,16 +30,16 @@ class UserForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs['class']='form-control'
 
-# class UserProfileForm(forms.ModelForm):
-#     profile_picture=forms.ImageField(required=False,error_messages ={'invalid':("image files only")},widget=forms.FileInput)
-#     class Meta:
-#         model=Userprofile
-#         fields=('address_line_1','address_line_2','city','state','country','pin_code')
+class UserProfileForm(forms.ModelForm):
+    profile_picture=forms.ImageField(required=False,error_messages ={'invalid':("image files only")},widget=forms.FileInput)
+    class Meta:
+        model=UserProfile
+        fields=('address_line_1','city','state','country')
 
-    # def __init__(self,*args,**kwargs):
-    #     super(UserProfileForm,self).__init__(*args,**kwargs)
-    #     for field in self.fields:
-    #         self.fields[field].widget.attrs['class']='form-control'
+    def __init__(self,*args,**kwargs):
+        super(UserProfileForm,self).__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs['class']='form-control'
 
 
 class AddressForm(forms.ModelForm):

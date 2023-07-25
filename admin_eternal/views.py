@@ -12,6 +12,10 @@ from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from accounts.models import *
 from accounts.forms import CustomUserCreationForm
+from django.db.models.functions import ExtractMonth,ExtractDay,ExtractYear
+from django.db.models import Count
+from datetime import date
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -20,9 +24,21 @@ from accounts.forms import CustomUserCreationForm
 
 
 def admin_index(request):
-    print("inadminindex")
-    if request.user.is_superuser:    
-        return render( request,'admin_templates/admin_index.html')
+    
+    if request.user.is_superuser:
+        total_users = CustomUser.objects.count()
+        total_orders = Order.objects.count()
+        recent_orders = Order.objects.order_by('-created_at')[:10]
+        orders = OrderProduct.objects.all().order_by('id')[:6]
+        
+    
+    
+    # }    
+        context={
+            'recent_orders': recent_orders,  'totalUsers': total_users, 'total_orders': total_orders,
+            'orders':orders
+            }
+        return render( request,'admin_templates/admin_index.html',context)
     else:
         return render(request,'admin_templates/admin_login.html')
 

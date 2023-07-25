@@ -110,16 +110,16 @@
                     <a class="nav-link" href="{%url 'addressbook'%}">ADDRESS BOOK</a>
                 </li>
                 <li class="nav-item pt-5">
-                    <a class="nav-link" href="#">ORDERS</a>
+                    <a class="nav-link" href="{%url 'orders'%}">ORDERS</a>
                 </li>
                 <li class="nav-item pt-5">
                     <a class="nav-link" href="{%url 'cart'%}">CART</a>
                 </li>
                 <li class="nav-item pt-5">
-                    <a class="nav-link" href="#">WISHLIST</a>
+                    <a class="nav-link" href="{%url 'wishlist'%}">WISHLIST</a>
                 </li>
                 <li class="nav-item pt-5">
-                    <a class="nav-link" href="#">WALLET</a>
+                    <a class="nav-link" href="{%url 'wallet'%}">WALLET</a>
                 </li>
             </ul>
         </div>
@@ -137,7 +137,7 @@
                     <img src="{{userprofile.profile_picture.url}}" alt="Profile Image" class="profile-image">
                     <div class="profile-details letter_design">
                         {% comment %} {% for user in user  %} {% endcomment %}
-                        <div class="field ">
+                        {% comment %} <div class="field ">
                             
                             <div class="field-value nav-link">{{user.username}}</div>
                             <div class="field-value nav-link">{{user.phone_number}}</div>
@@ -150,7 +150,51 @@
             
                         <div>
                             <a href="{%url 'edit_profile'%}" class="btn btn-primary">Edit Address</a>
-                        </div>
+                        </div> {% endcomment %}
+
+                        {% if address %}
+                        {% for ads in address %}
+                        
+
+<div class="card mb-3 mt-5">
+    
+  <div class="card-body">
+    <h2>{{ ads.name }}</h2>
+    <p class="card-text">
+      {{ ads.house_name }},
+      {{ ads.address_line_1 }},
+      {{ ads.city }},<br>
+      {{ ads.state }},
+      Pincode: {{ ads.pincode }},
+      {{ ads.country }},
+      Phone number: {{ ads.phone }}
+    </p>
+    {% comment %} <a href="{% url 'edit_addresss_addressbook' ads.id %}" class="btn btn-primary mr-2">
+      <i class="fa fa-pencil-alt"></i> Edit
+    </a>
+    <a href="{% url 'del_address' ads.id %}" class="btn btn-danger mr-2">
+      <i class="fa fa-trash-alt"></i> Delete
+    </a> {% endcomment %}
+   
+  
+    
+  
+</div>
+</div>
+<div>  <a href="{% url 'del_address_user' ads.id %}" class="btn btn-danger mr-2">
+    <i class="fa fa-trash-alt"></i> Delete
+  </a></div>
+{% endfor %}
+
+ 
+        
+                        {% else %}
+                        <h2>Your Address Is Empty.</h2>
+                        {% endif %}
+                        <div >
+                            <a href="{% url 'Add_address_user' %}" class="btn btn-primary mt-3">Add Address</a>
+                          </div>
+                          
                         {% comment %} <div>
                             <a href="{%url 'add_address'%}" class="btn btn-primary">Add Address</a>
                         </div> {% endcomment %}
@@ -179,6 +223,7 @@
         </div>
         
         </div> 
+       
 
 
 

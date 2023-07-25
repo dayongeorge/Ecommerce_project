@@ -72,7 +72,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 
-# admin.site.register(Userprofile,UserProfileAdmin)
+admin.site.register(UserProfile,UserProfileAdmin)
 admin.site.register(Product,ProductAdmin)
 # admin.site.register(ProductAttribute,ProductAttributeAdmin)
 admin.site.register(Category,CategoryAdmin)

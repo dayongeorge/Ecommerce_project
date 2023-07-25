@@ -45,6 +45,7 @@ class Order(models.Model):
     is_ordered = models.BooleanField(default= False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+    return_reason=models.TextField(blank=True)
 
     # def _str_(self):
     #     return self.address.name
@@ -74,3 +75,11 @@ class Coupon(models.Model):
     is_expired = models.BooleanField(default=False)
     discount_price = models.IntegerField(default = 100)
     minimum_amount = models.IntegerField(default=500)
+
+class Wallet(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+   
+
+    def str(self):
+        return f"Wallet for {self.user.username}"

@@ -103,23 +103,23 @@
                 <img src="{{userprofile.profile_picture.url}}" alt="Profile Image" class="profile-image">
                 <div class="field-value nav-link alignn">{{user.username}}</div>
             </div>
-                <li class="nav-item pt-5">
+                 <li class="nav-item pt-5">
                     <a class="nav-link active" href="{%url 'user_profile'%}">USER PROFILE</a>
                 </li>
                 <li class="nav-item pt-5">
                     <a class="nav-link" href="{% url 'addressbook'%}">ADDRESS BOOK</a>
-                </li>
+                </li>  
                 <li class="nav-item pt-5">
-                    <a class="nav-link" href="#">ORDERS</a>
+                    <a class="nav-link" href="{%url 'orders'%}">ORDERS</a>
                 </li>
                 <li class="nav-item pt-5">
                     <a class="nav-link" href="{%url 'cart'%}">CART</a>
                 </li>
                 <li class="nav-item pt-5">
-                    <a class="nav-link" href="#">WISHLIST</a>
+                    <a class="nav-link" href="{%url 'wishlist'%}">WISHLIST</a>
                 </li>
                 <li class="nav-item pt-5">
-                    <a class="nav-link" href="#">WALLET</a>
+                    <a class="nav-link" href="{%url 'wallet'%}">WALLET</a>
                 </li>
             </ul>
         </div>
@@ -155,6 +155,10 @@
                     <div>
                         <a href="{%url 'edit_profile'%}" class="btn btn-primary">Edit Profile</a>
                     </div>
+                    <div>
+                        <a href="{%url 'forgotPassword'%}" class="btn btn-primary">Change Password</a>
+                    </div>
+                    
                     {% comment %} <div class="title nav-link">Address</div>
                     <div class="field">
                         <label class="nav-link">Street:</label>

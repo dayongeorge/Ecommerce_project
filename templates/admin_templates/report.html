@@ -275,7 +275,70 @@
         </div>
     </div>
     </div>
-          </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+      <div class="tm-bg-primary-dark tm-block">
+      <h2 class="tm-block-title">Stock Report</h2>
+      <table class="table" id="product_stock_table">
+          <thead>
+          <tr>
+              <th scope="col">Product Name</th>
+              <th scope="col">Stock Quantity</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.quantity }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+      <div class="row ml-5">
+          <div class="text-center mt-3 col-6">
+          <a onclick="exportTableToExcel('product_stock_table','product_stock_table')" class="btn btn-success">Download Excel</a>
+          </div>
+          <div class="text-center mt-3 col-6">
+          <a onclick="exportTableToPDF('product_stock_table','product_stock_table')" class="btn btn-success">Download Pdf</a>
+          </div>
+      </div>
+      </div>
+  </div>
+
+
+  <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 tm-block-col mt-5">
+    <div class="tm-bg-primary-dark tm-block">
+    <h2 class="tm-block-title">Cancel Report</h2>
+    <table class="table" id="product_stock_table">
+        <thead>
+        <tr>
+            <th scope="col">Order Number</th>
+            <th scope="col">Customer Name</th>
+        </tr>
+        </thead>
+        <tbody>
+          {% for i in canceled_products %}
+        <tr>
+          <td>{{ i.order_number }}</td>
+          <td>{{ i.user.username }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="row ml-5">
+        <div class="text-center mt-3 col-6">
+        <a onclick="exportTableToExcel('product_stock_table','product_stock_table')" class="btn btn-success">Download Excel</a>
+        </div>
+        <div class="text-center mt-3 col-6">
+        <a onclick="exportTableToPDF('product_stock_table','product_stock_table')" class="btn btn-success">Download Pdf</a>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+  </div>
 
 
 <script src="https://unpkg.com/xlsx/dist/xlsx.core.min.js"></script>

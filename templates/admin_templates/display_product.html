@@ -38,6 +38,8 @@
                     <td>{{product.original_price}}</td>
                     <td><a href=" {% url 'update_product' product.id %}" class="btn btn-light">Update</a></td>
                     <td><a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Delete</a></td>
+
+                    
                     
                 </tr>
                 {% endfor %} 

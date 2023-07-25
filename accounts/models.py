@@ -2,6 +2,7 @@ import os
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
+
 import datetime
 from django.utils.text import slugify 
 from django.utils.html import mark_safe
@@ -175,6 +176,20 @@ class Address(models.Model):
 
     def _str_(self):
         return self.user.username 
+
+class UserProfile(models.Model):
+    user=models.OneToOneField(CustomUser,on_delete=models.CASCADE)
+    address_line_1=models.CharField(blank=True,max_length=100)
+    profile_picture=models.ImageField(blank=True,upload_to="uploads")
+    city = models.CharField(blank=True,max_length=100)
+    state = models.CharField(blank=True,max_length=100)
+    country = models.CharField(blank=True,max_length=100)
+
+    def __str__(self):
+        return self.user.first_name 
+    def full_address(self):
+        return self.address_line_1
+
 
 
 
