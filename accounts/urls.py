@@ -11,6 +11,13 @@ urlpatterns = [
     path('phone_verify',views.phone_verify, name="phone_verify"),
     path('verify/', views.verify_code, name="verify"),
 
+
+    path('forgotPassword',views.forgotPassword, name="forgotPassword"),
+    path('forgotPassword_otp',views.forgotPassword_otp, name="forgotPassword_otp"),
+    path('resetPassword',views.resetPassword, name="resetPassword"),
+
+
+
     
     path('product_details/<int:id>/',views.product_details,name="product_details"),
     path('shop',views.shop,name="shop"),
@@ -26,8 +33,21 @@ urlpatterns = [
 
 #####################################################
     path('Add_address',views.Add_address.as_view(),name="Add_address"),
+    path('Add_address_user',views.Add_address_user.as_view(),name="Add_address_user"),
+
     path('edit_addresss/<int:id>/',views.edit_addresss,name="edit_addresss"),
+   
+
     path('del_address/<int:id>/',views.del_address,name="del_address"),
+    path('del_address_user/<int:id>/',views.del_address_user,name="del_address_user"),
+
+
+
+    path('edit_profile',views.edit_profile,name="edit_profile"),
+    path('user_profile',views.user_profile,name="user_profile"),
+    path('addressbook',views.addressbook,name="addressbook"),
+
+
 
 
 
@@ -42,21 +62,12 @@ urlpatterns = [
   
 
     path('search',views.search,name="search"),
+    path('contact',views.contact,name="contact"),
     path('error_404',views.error_404,name="error_404"),
 
 
 
     path('address_list',views.address_list,name="address_list"),
-
-
-
-
-
-
-
-
-
-    # path('cart',views.cart,name="cart"),
 
 
 ]

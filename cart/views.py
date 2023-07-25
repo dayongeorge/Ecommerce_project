@@ -79,7 +79,7 @@ def add_cart(request, product_id):
     
     if success_condition:
         response={'success':'success'}
-        # return redirect('cart')
+        return redirect('cart')
     else:
         response = {'status': 'error', 'message': 'Error message goes here'}
 
@@ -153,17 +153,19 @@ def remove_cart_item(request,product_id):
 
 def cart(request,total=0,quantity=0,cart_items=None):
     
+
     try:
         tax = 0
-        grand_total = 0
+        total_price = 0
         total=0
-        current_user=request.user
+        user=request.user
+        
         cart=Cart.objects.get(cart_id=_cart_id(request))
-        # print(cart)
+            # print(cart)
         cart_items=CartItem.objects.filter(cart=cart,is_active=True)
       
         #    (filter inside )
-        print(cart_items)
+        print(cart_items) 
         for cart_item in cart_items:
             print(cart_item)
             total += (cart_item.product.offer_price * cart_item.quantity)
@@ -171,14 +173,20 @@ def cart(request,total=0,quantity=0,cart_items=None):
             tax=(2*total)/100
             print(tax)
             total_price=total+tax
+            print("in for")
             print(total_price)
             if request.session.get('total'):
                  total_price=request.session.get('total')
+                 print("in session")
+                 print(total_price)
             else:
                 total_price=total+tax
             print(total_price)
     except ObjectDoesNotExist:
-        pass
+        total_price=0
+        quantity=0
+        tax=0
+        total=0
 
     context={
         'total':total,
@@ -190,6 +198,45 @@ def cart(request,total=0,quantity=0,cart_items=None):
     if not cart_items:
         context['empty_cart'] = True
     return render(request,"user_templates/cart.html",context)
+
+
+# def cart(request):
+#     try:
+#         tax = 0
+#         total = 0
+#         quantity = 0
+#         current_user = request.user
+#         cart = Cart.objects.get(cart_id=_cart_id(request))
+#         cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+
+#         for cart_item in cart_items:
+#             total += (cart_item.product.offer_price * cart_item.quantity)
+#             quantity += cart_item.quantity
+
+#         tax = (2 * total) / 100
+#         total_price = total + tax
+
+#         # Store the 'total_price' in the session
+#         request.session['total'] = total_price
+#     except ObjectDoesNotExist:
+#         total_price = 0
+#         quantity = 0
+#         tax = 0
+#         total = 0
+
+#     context = {
+#         'total': total,
+#         'quantity': quantity,
+#         'cart_items': cart_items,
+#         'tax': tax,
+#         'cart_total': total_price,
+#     }
+
+#     if not cart_items:
+#         context['empty_cart'] = True
+
+#     return render(request, "user_templates/cart.html", context)
+
 
 def update_cart_item_quantity(request):
      
@@ -272,8 +319,13 @@ def update_cart_item_quantity(request):
 
 def wishlist(request):
     user = request.user
-    wishlist = WishList.objects.get(user=user)
-    products = wishlist.products.all()
+    try:
+        wishlist = WishList.objects.get(user=user)
+        products = wishlist.products.all()
+    except WishList.DoesNotExist:
+        # If the wishlist does not exist, create a new empty wishlist
+        wishlist = WishList.objects.create(user=user)
+        products = []
     
     context = {
         'wishlist': wishlist,

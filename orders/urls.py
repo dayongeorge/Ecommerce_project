@@ -18,19 +18,23 @@ urlpatterns = [
     # path('place_order',views.place_order,name="place_order"),
    
     path('order_complete',views.order_complete,name="order_complete"),
-    # path('order_complete',views.order_complete,name="order_complete"),
+    
 
     # path('cash_on_delivery',views.cash_on_delivery,name="cash_on_delivery"),
 
-    path('admin_orders',views.admin_orders,name="admin_orders"),
+    path('orders',views.orders,name="orders"),
     path('admin_panel',views.admin_panel,name="admin_panel"),
 
     path('cancel_order<int:order_id>',views.cancel_order,name="cancel_order"),
+    path('return_order<int:order_id>',views.return_order,name="return_order"),
+
     # path('orders/<int:order_id>/return/', views.return_order, name='return_order'),
 
     # path('add_address', views.add_address, name="add_address"),
     # path('address_section', views.address, name="order_address"), 
     
+    path('wallet',views.wallet,name="wallet"),
+
    
 
 ]

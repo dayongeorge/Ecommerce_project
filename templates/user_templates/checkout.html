@@ -34,14 +34,32 @@
                           <form id="addressForm">
                           {% if address %}
                           {% for ads in address %}
-                          
-                          <h2>{{ads.name}},</h2>
-                          <h6>{{ads.house_name}}, {{ads.address_line_1}}, {{ads.city}},<br> {{ads.state}}, Pincode: {{ads.pincode}}, {{ads.country}}, Phone number: {{ads.phone}}</h6>
-                          <a href="{% url 'edit_addresss' ads.id %}" class="mb-5 "><i style="font-size:24px" class="fa">&#xf044;</i>
-                          </a>
-                          <a href="{% url 'del_address' ads.id %}"><i class="material-icons">&#xe872;</i></a>
-                           <a href="{% url 'payment' ads.id %}" class="btn btn-success">Select</a> 
-                          {% endfor %}
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h2>{{ ads.name }}</h2>
+      <p class="card-text">
+        {{ ads.house_name }},
+        {{ ads.address_line_1 }},
+        {{ ads.city }},<br>
+        {{ ads.state }},
+        Pincode: {{ ads.pincode }},
+        {{ ads.country }},
+        Phone number: {{ ads.phone }}
+      </p>
+      <a href="{% url 'edit_addresss' ads.id %}" class="btn btn-primary mr-2">
+        <i class="fa fa-pencil-alt"></i> Edit
+      </a>
+      <a href="{% url 'del_address' ads.id %}" class="btn btn-danger mr-2">
+        <i class="fa fa-trash-alt"></i> Delete
+      </a>
+      <a href="{% url 'payment' ads.id %}" class="btn btn-success">
+        Select
+      </a>
+    </div>
+  </div>
+
+  {% endfor %}
           
                           {% else %}
                           <h2>Your Address Is Empty.</h2>

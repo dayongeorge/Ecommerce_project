@@ -11,7 +11,7 @@ from accounts.models import *
 from cart.models import *
 from cart.views import _cart_id
 from .import verify
-from .forms import VerifyForm
+from .forms import VerifyForm,UserProfileForm
 from django.contrib.auth.decorators import login_required
 from cart.views import _cart_id
 from cart.models import CartItem
@@ -232,17 +232,50 @@ def user_profile(request):
     user_profile = None  # Set initial value to None
 
     try:
-         user_profile =  get_object_or_404(Userprofile, user=request.user)
+         user_profile =  UserProfile.objects.get( user=request.user)
 
-    except Userprofile.DoesNotExist:
+    except UserProfile.DoesNotExist:
         # Handle the case when no UserProfile object is found
-        pass
+        return render (request,'user_templates/user_profile.html')
 
     context = {
         'userprofile': user_profile,
         'user': request.user,
     }
     return render(request, 'user_templates/user_profile.html', context)
+
+def edit_profile(request):
+    userprofile=UserProfile.objects.get(user=request.user)
+    if request.method=="POST":
+        user_form=UserForm(request.POST,instance=request.user)
+        profile_form=UserProfileForm(request.POST,request.FILES,instance=userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request,"your profile has been updated..")
+            return redirect('edit_profile')
+    else:
+        user_form=UserForm(instance=request.user)
+        profile_form=UserProfileForm(instance=userprofile)
+
+    context= {
+       'user_form':user_form,
+        'profile_form':profile_form,
+        'userprofile':userprofile,
+        }
+    return render(request,'user_templates/edit_profile.html',context)
+
+def addressbook(request):
+    userprofile = UserProfile.objects.get(user=request.user)
+    address = Address.objects.filter(user=request.user)
+    
+    context = {
+        'userprofile': userprofile,
+        'user':request.user,
+        'address':address,
+    }
+    
+    return render(request, 'user_templates/addressbook.html', context)
 
 
 # def sidebar(request):
@@ -299,41 +332,14 @@ def products_by_category(request, category_id):
     return render(request, 'user_templates/categorywise.html', context)
 
 
-# def edit_profile(request):
-#     userprofile=get_object_or_404(Userprofile,user=request.user)
-#     if request.method=="POST":
-#         user_form=UserForm(request.POST,instance=request.user)
-#         profile_form=UserProfileForm(request.POST,request.FILES,instance=userprofile)
-#         if user_form.is_valid() and profile_form.is_valid():
-#             user_form.save()
-#             profile_form.save()
-#             messages.success(request,"your profile has been updated..")
-#             return redirect('edit_profile')
-#     else:
-#         user_form=UserForm(instance=request.user)
-#         profile_form=UserProfileForm(instance=userprofile)
-
-#     context= {
-#        'user_form':user_form,
-#         'profile_form':profile_form,
-#         'userprofile':userprofile,
-#         }
-#     return render(request,'user_templates/edit_profile.html',context)
 
 
 
 
 
 
-# def addressbook(request):
-#     userprofile = Userprofile.objects.get(user=request.user)
-    
-#     context = {
-#         'userprofile': userprofile,
-#         'user':request.user,
-#     }
-    
-#     return render(request, 'user_templates/addressbook.html', context)
+
+
 
 
 
@@ -372,14 +378,14 @@ class Add_address(CreateView):
 class Add_address_user(CreateView):
     model = Address
     form_class = AddressForm
-    template_name = 'add-address.html'
+    template_name = 'user_templates/add_address.html'
     
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('userprofile')
+        return reverse('addressbook')
 
 
 # edit address checkout page
@@ -397,6 +403,7 @@ def edit_addresss(request, id):
         "product_form": product_form
     }
     return render(request, 'user_templates/edit-address.html', context)
+
 
 
 # user profile edit address
@@ -425,14 +432,15 @@ def del_address(request, id):
 def del_address_user(request, id):
     prod = Address.objects.get(pk=id)
     prod.delete()
-    return redirect('userprofile')
+    return redirect('user_templates/addressbook')
 
 
 def forgotPassword(request):
     global mobile_number_forgotPassword
     if request.method == 'POST':
         # setting this mobile number as global variable so i can access it in another view (to verify)
-        mobile_number_forgotPassword = request.POST.get('phone_number')
+        mobile_number_forgotPassword = ('+91' + str(request.POST.get('phone_number')))
+        print(mobile_number_forgotPassword)
         # checking the null case
         if mobile_number_forgotPassword is '':
             messages.warning(request, 'You must enter a mobile number')
@@ -442,14 +450,16 @@ def forgotPassword(request):
         # access it in verify otp:
         # request.session['mobile']= mobile_number
         user = CustomUser.objects.filter(phone_number=mobile_number_forgotPassword)
+        print("user")
+        print(user)
         if user:  #if user exists
-            verify.send('+91' + str(mobile_number_forgotPassword))
+            verify.send(mobile_number_forgotPassword)
             return redirect('forgotPassword_otp')
         else:
             messages.warning(request,'Mobile number doesnt exist')
             return redirect('forgotPassword')
             
-    return render(request, 'forgotPassword.html')
+    return render(request, 'user_templates/forgotPassword.html')
 
 
 def forgotPassword_otp(request):
@@ -460,17 +470,17 @@ def forgotPassword_otp(request):
         if form.is_valid():
             otp = form.cleaned_data.get('code')
         # otp = request.POST.get('otp')
-        if verify.check('+91'+ str(mobile_number), otp):
+        if verify.check(mobile_number, otp):
             user = CustomUser.objects.get(phone_number=mobile_number)
             if user:
                 return redirect('resetPassword')
         else:
             messages.warning(request,'Invalid OTP')
-            return redirect('enter_otp')
+            return redirect('forgotPassword_otp')
     else:
         form = VerifyForm()
         
-    return render(request,'forgotPassword_otp.html', {'form':form})
+    return render(request,'user_templates/forgotPassword_otp.html', {'form':form})
 
 
 def resetPassword(request):
@@ -491,9 +501,13 @@ def resetPassword(request):
 
             print('new password  : ' +str(user.password))
             messages.success(request, 'Password changed successfully')
-            return redirect('signin')
+            return redirect('login_view')
         else:
             messages.warning(request, 'Passwords doesnot match, Please try again')
             return redirect('resetPassword')
     
-    return render(request, 'resetPassword.html')
+    return render(request, 'user_templates/resetPassword.html')
+
+
+def contact(request):
+    return render(request,'user_templates/contact.html')

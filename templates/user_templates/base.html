@@ -220,7 +220,7 @@
                                         </ul>
                                     </li>
                                     
-                                    <li>
+                                    {% comment %} <li>
                                         <a href="#">Brand</a>
                                         <ul class="submenu">
                                             {% for brand  in brands %}
@@ -228,9 +228,9 @@
                                             {% endfor %}
                                             <!-- Add more submenu items for other categories -->
                                         </ul>
+                                    </li> {% endcomment %}
                                     </li>
-                                    </li>
-                                    <li><a href="blog.html">Blog</a>
+                                    {% comment %} <li><a href="blog.html">Blog</a>
                                         <ul class="submenu">
                                             <li><a href="blog.html">Blog</a></li>
                                             <li><a href="blog-details.html">Blog Details</a></li>
@@ -244,8 +244,8 @@
                                             <li><a href="confirmation.html">Confirmation</a></li>
                                             <li><a href="checkout.html">Product Checkout</a></li>
                                         </ul>
-                                    </li>
-                                    <li><a href="contact.html">Contact</a></li>
+                                    </li> {% endcomment %}
+                                    <li><a href="{%url 'contact'%}">Contact</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -258,9 +258,10 @@
                                     <div class="dropdown">
                                         <button class="dropbtn">{{user.username}}</button>
                                         <div class="dropdown-content">
-                                        {% comment %} <a href="{%url 'user_profile'%}">Account</a>
-                                        <a href="{%url 'addressbook'%}">Address</a> {% endcomment %}
+                                        <a href="{%url 'user_profile'%}">Account</a>
+                                         <a href="{%url 'addressbook'%}">Address</a> 
                                         <a href="{%url 'wishlist'%}">Wishlist</a>
+                                        <a href="{%url 'wallet'%}">Wallet</a>
 
                                          <a href="{%url 'orders'%}">Orders</a> 
                                         <a href="{% url 'signout'%}">Logout</a>

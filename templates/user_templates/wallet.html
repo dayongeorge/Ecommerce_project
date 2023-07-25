@@ -1,0 +1,203 @@
+{% extends 'user_templates/base.html' %}
+
+ {% load static %}
+
+ {% block content %}
+
+ <!DOCTYPE html>
+ <html>
+ <head>
+     <title>Sidebar Example</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" href=" https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css ">
+   
+
+     <style>
+        .sidebar {
+            height: 100vh;
+            width:400px;
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #343a40;
+            color: #fff;
+        }
+        
+        @media (max-width: 768px) {
+            .d-flex {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                height: auto;
+                min-height: 100vh;
+            }
+        }
+         .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            margin-top:30px;
+            margin-left:80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .profile-heading {
+            width:500px
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-details {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        .profile-details .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .profile-details .field {
+            margin-bottom: 15px;
+        }
+        
+        .profile-details .field label {
+            font-weight: bold;
+        }
+        
+        .profile-details .field-value {
+            margin-top: 5px;
+        }
+        .letter_design{
+            font-size:25px;
+        }
+        .alignn{
+            margin-top:60px;
+            
+
+        }
+
+        .wallet-card {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+          
+          .wallet-card-header {
+            text-align: center;
+            margin-bottom: 10px;
+          }
+          
+          .wallet-card-header h2 {
+            color: #333;
+          }
+          
+          .wallet-card-body p {
+            margin: 0;
+            color: #555;
+            font-size: 16px;
+            line-height: 1.5;
+          }
+          
+          /* Additional styles for a more appealing look */
+          .wallet-card {
+            font-family: Arial, sans-serif;
+          }
+          
+          .wallet-card-header {
+            background-color: #4285f4;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+          }
+          
+          .wallet-card-body p {
+            margin-bottom: 8px;
+          }
+          
+     </style>
+ </head>
+ <body>
+   
+    <div class="row ">
+        <div class="d-flex">
+            <div class="sidebar pl-5 ">
+                <ul class="nav flex-column">
+                    <div class="row ">
+                    <img src="{{userprofile.profile_picture.url}}" alt="Profile Image" class="profile-image">
+                    <div class="field-value nav-link alignn">{{user.username}}</div>
+                </div>
+                    <li class="nav-item pt-5">
+                        <a class="nav-link active" href="{%url 'user_profile'%}">USER PROFILE</a>
+                    </li>
+                    <li class="nav-item pt-5">
+                        <a class="nav-link" href="{%url 'addressbook'%}">ADDRESS BOOK</a>
+                    </li>
+                    <li class="nav-item pt-5">
+                        <a class="nav-link" href="{%url 'orders'%}">ORDERS</a>
+                    </li>
+                    <li class="nav-item pt-5">
+                        <a class="nav-link" href="{%url 'cart'%}">CART</a>
+                    </li>
+                    <li class="nav-item pt-5">
+                        <a class="nav-link" href="{%url 'wishlist'%}">WISHLIST</a>
+                    </li>
+                    <li class="nav-item pt-5">
+                        <a class="nav-link" href="{%url 'wallet'%}">WALLET</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="content p-3">
+                <!-- Content goes here -->
+            </div>
+        </div>
+
+{% comment %} user profile content {% endcomment %}
+     
+
+
+     <div class="col-lg-8 mx-auto ">
+    <div class="bg-light rounded h-100 p-4 ">
+        <div class="title"> <h2> Wallet</h2></div>
+        <div class="col-9 content p-3">
+            <div class="wallet-card">
+                <div class="wallet-card-header">
+                  <h2>My Wallet</h2>
+                </div>
+                <div class="wallet-card-body">
+                  <p>Username: <b> {{user.username}}</b></p>
+                  <p>Wallet Balance: <b> {{wallet.balance}} </b></p>
+                </div>
+              </div>     
+    </div>
+    
+    </div>
+    </div>
+    
+    </div> 
+
+{% comment %} user profile content ends here {% endcomment %}
+     
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ </body>
+ </html>
+ 
+{% endblock %}
