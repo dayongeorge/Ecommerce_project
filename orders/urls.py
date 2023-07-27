@@ -27,14 +27,9 @@ urlpatterns = [
 
     path('cancel_order<int:order_id>',views.cancel_order,name="cancel_order"),
     path('return_order<int:order_id>',views.return_order,name="return_order"),
-
-    # path('orders/<int:order_id>/return/', views.return_order, name='return_order'),
-
-    # path('add_address', views.add_address, name="add_address"),
-    # path('address_section', views.address, name="order_address"), 
     
     path('wallet',views.wallet,name="wallet"),
-
+    path('order_details<int:id>',views.order_details,name="order_details"),
    
 
 ]

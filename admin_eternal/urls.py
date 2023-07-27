@@ -43,6 +43,8 @@ urlpatterns = [
     path('del_coupon/<int:id>/', views.del_coupon,name="del_coupon"),   
     path('edit_coupon/<int:id>/', views.edit_coupon,name="edit_coupon"),
 
+    path('singleorder_details<int:id>',views.singleorder_details,name="singleorder_details"),
+
 
 
     path('t404', views.t404,name="t404"),

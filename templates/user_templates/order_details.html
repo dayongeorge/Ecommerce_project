@@ -1,0 +1,214 @@
+{% extends 'user_templates/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-12">
+
+
+<div class="col-md-6">
+        <table class="table">
+            <thead>
+              <tr>
+                {% comment %} <th scope="col">Order ID </th> {% endcomment %}
+
+                <th scope="col">Product </th>
+                
+
+
+
+
+
+              </tr>
+            </thead>
+            <tbody>
+            
+              <tr>
+              
+                <td>
+                  <div class="media">
+                    <div class="d-flex" >
+                      <img src="{{orderproduct.product.product_image.url}} " alt="" class="custom-image ">
+                    </div>
+                    <style>
+                        .custom-image {
+                            height: 150px;
+                            width: 150px;
+                        }
+                    </style>
+                    <div class="media-body">
+                      <p><a class="title text-dark " > <b> {{orderproduct.product.name}} </b></a></p>
+                    </div>
+                  </div>
+                </td>
+               
+              
+                
+                </div>
+            </tbody>
+          </table>
+        
+        </div>
+            
+            <div>
+            <div class="card">
+              <div class="card-body">
+                <div class="card-header">
+                  <div class="logo">
+                    <a href="index.html"><img src="{% static '/img/logo/logo.png'%}" alt=""></a>
+                  </div>
+                  <h3 class="text-center">Order Invoice</h3>
+                </div>
+
+
+                  <table class="table table-bordered" id="Invoice_of_your_order">
+                <tbody>
+                  <tr>
+                    <th>Order ID:</th>
+                    <td>{{ order.order_number }}</td>
+                    <th>Date created:</th>
+                    <td>{{ order.created_at }}</td>
+                  </tr>
+                  <tr>
+                    <th>Product Name</th>
+                    <td>{{orderproduct.product.name}}</td>
+                    
+                  </tr>
+                  <!-- Include any other order-related information in the same format -->
+                  <tr>
+                    <th>Product Price:</th>
+                    <td >₹{{ total_price }}</td>
+                    <th>Tax:</th>
+                    <td >₹{{ total_price }}</td>
+                </tr>
+                    <tr>
+                    <th>Quantity:</th>
+                    <td >{{ orderproduct.quantity }}</td>
+                    <th>Discount:</th>
+                    <td >₹{{ total_price }}</td>
+                 
+                  </tr>
+                  <tr>
+                    <th>Total Amount:</th>
+                    <td>{{ order.order_total }}</td>
+                    <th>Payment method:</th>
+                    <td>{{ order.payment.payment_method }}</td>
+                  </tr>
+                  <tr>
+                    <th colspan="2">Shipping Details</th>
+                    <th colspan="2">Contact Information</th>
+                  </tr>
+                  <tr>
+                    <th>Name:</th>
+                    <td>{{ order.address.name }}</td>
+                    <th>Email:</th>
+                    <td>{{ user.email  }}</td>
+                  </tr>
+                  <tr>
+                    <th>Address Line 1:</th>
+                    <td>{{ order.address.address_line_1 }}</td>
+                    <th>Phone:</th>
+                    <td>{{ user.phone_number }}</td>
+                  </tr>
+                  <tr>
+                    <th>State/City:</th>
+                    <td>{{ order.address.state }}, {{ order.address.city }}</td>
+                    <td colspan="2"></td>
+                  </tr>
+                  <tr>
+                    <th>Country:</th>
+                    <td>{{ order.address.country }}</td>
+                    </tr>
+                    <tr>
+                    <th>Pincode:</th>
+                    <td>{{ order.address.pincode }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+                </div>
+              </div>
+            </div>
+            <div class="text-center mt-3 col-6">
+              <a onclick="exportTableToPDF('Invoice_of_your_order','Invoice_of_your_order')" class="btn btn-success">Download Invoice</a>
+              </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script src="https://unpkg.com/xlsx/dist/xlsx.core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+						 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+						 <script src="https://unpkg.com/xlsx/dist/xlsx.core.min.js"></script>
+						 
+					 
+					 
+					 
+							 <script>
+								 function exportTableToExcel(tableID, filename = '') {
+									 console.log("ok")
+								 var tableSelect = document.getElementById(tableID);
+								 var sheet = XLSX.utils.table_to_sheet(tableSelect);
+							 
+								 // Create a new workbook and add the sheet
+								 var workbook = XLSX.utils.book_new();
+								 XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet1');
+							 
+								 // Specify the file name
+								 filename = filename ? filename + '.xlsx' : 'excel_data.xlsx';
+							 
+								 // Generate the XLSX file
+								 var excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+								 var blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+							 
+								 // Download the blob as a file
+								 download(blob, filename);
+								 }
+							 
+								 function download(blob, filename) {
+								 var url = window.URL.createObjectURL(blob);
+								 var link = document.createElement('a');
+								 link.href = url;
+								 link.download = filename;
+								 link.click();
+								 }
+							 
+							 
+								 </script>
+							 
+							 
+								 <!-- convert to pdf script -->
+							 
+							 <script>
+							 
+								 function exportTableToPDF(tableID, filename = '') {
+								   var tableSelect = document.getElementById(tableID);
+								 
+								   // Specify the file name
+								   filename = filename ? filename : 'order_id';
+								 
+								   // Generate the PDF file
+								   const { jsPDF } = window.jspdf; 
+								   var doc = new jsPDF();
+								   doc.autoTable({ html: '#' + tableID });
+								 
+								   // Download the PDF file
+								   doc.save(filename + '.pdf');
+								 }
+					      </script>
+			<script>
+  
+
+
+{% endblock %}

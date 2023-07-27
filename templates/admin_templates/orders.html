@@ -17,7 +17,7 @@
             <thead>
                 <tr>
                     {% comment %} <th scope="col">Order Number</th> {% endcomment %}
-                    <th scope="col">Payment Number</th>
+                    <th scope="col">order Number</th>
                     <th scope="col">Payment Method</th>
                     <th scope="col">Amount Paid</th>
                     <th scope="col">Payment Status</th>
@@ -38,7 +38,7 @@
                 {% for order in orders %}
                 <tr>
                     {% comment %} <th scope="row">{{order.order.order_number}}</td> {% endcomment %}
-                    <td> {{ order.id }}</th>
+                    <td> <a href="{%url 'singleorder_details' order.order.id%}">{{ order.order.order_number }}</a></th>
                     <td> {{ order.payment.payment_method }}</td>
                     <td> {{ order.payment.amount_paid }}</td>
                     <td> {{ order.payment.status }}</td>

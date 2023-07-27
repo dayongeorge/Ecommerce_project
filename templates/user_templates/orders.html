@@ -34,6 +34,8 @@
               <table class="table">
                 <thead>
                   <tr>
+                    {% comment %} <th scope="col">Order ID </th> {% endcomment %}
+
                     <th scope="col">Product </th>
                     <th scope="col">Quantity</th>
 
@@ -53,6 +55,10 @@
                 <tbody>
                 {% for order in orders %}
                   <tr>
+                    {% comment %} <td>
+                      <p><a class="title text-dark"> <b> {{order.order.order_number}} </b></a></p>
+
+                    </td> {% endcomment %}
                   
                     <td>
                       <div class="media">
@@ -60,12 +66,12 @@
                           <img src="{{order.product.product_image.url}}" alt="" />
                         </div>
                         <div class="media-body">
-                          <p><a class="title text-dark"> <b> {{order.product.name}} </b></a></p>
+                          <p><a href="{%url 'order_details' order.order.id%}"class="title text-dark"> <b> {{order.product.name}} </b></a></p>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <h5 >{{order.product.quantity}}</h5>
+                      <h5 >{{order.quantity}}</h5>
                     </td>
                     <td>
                       <h5 style="color:red">₹{{order.order.order_total}}</h5>

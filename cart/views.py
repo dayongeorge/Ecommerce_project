@@ -48,6 +48,7 @@ def _cart_id(request):
 
 #############################################
 # og functions for remove and add
+@login_required(login_url='login_view')
 def add_cart(request, product_id):
     if 'total' in request.session:
         del request.session['total']
