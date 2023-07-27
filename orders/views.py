@@ -114,26 +114,7 @@ class Checkout(View):
 
 
 
-def order_complete(request,):
-    order_number = request.GET.get('order_number')
-    payment_id = request.GET.get('payment_id')
-    total_price = request.GET.get('total_price')
-    payment_method = request.GET.get('payment_method')
-    user=request.user
-    address_id=request.GET.get('address_id')
-    address = Address.objects.get(id=address_id)
-    # order_id = request.session.get('order_id')
-    # order = Order.objects.get(id=order_id)
 
-
-    return render (request,'order_templates/order_complete.html',{
-        'address':address,
-        'order_number': order_number,
-        'payment_id': payment_id,
-        'total_price': total_price,
-        'payment_method': payment_method
-        })
-   
 
 
 
@@ -332,6 +313,7 @@ def Paypal_payments(request):
 def orders(request):
 
     orders = OrderProduct.objects.filter(user=request.user,ordered=False)
+    
     context = {'orders': orders}
     
     return render(request,'user_templates/orders.html',context)  
@@ -472,6 +454,39 @@ def wallet(request):
     except:
         wallet = Wallet.objects.create(user=request.user, balance=0)
     return render(request,'user_templates/wallet.html',{'wallet':wallet,'userprofile': user_profile,})
+
+
+def order_complete(request,):
+    order_number = request.GET.get('order_number')
+    payment_id = request.GET.get('payment_id')  
+    total_price = request.GET.get('total_price')
+    payment_method = request.GET.get('payment_method')
+    user=request.user
+    address_id=request.GET.get('address_id')
+    address = Address.objects.get(id=address_id)
+    # order_id = request.session.get('order_id')
+    # order = Order.objects.get(id=order_id)
+
+
+    return render (request,'order_templates/order_complete.html',{
+        'address':address,
+        'order_number': order_number,
+        'payment_id': payment_id,
+        'total_price': total_price,
+        'payment_method': payment_method
+        })
+   
+
+def order_details(request,id):
+    order=Order.objects.get(user=request.user,id=id)
+    orderproduct=OrderProduct.objects.get(id=id)
+    print("order")
+    print(order)
+    context={
+        'order':order,
+        'orderproduct':orderproduct
+    }
+    return render(request,'user_templates/order_details.html',context)
 
 
 

@@ -295,6 +295,7 @@ def t404(request):
 
 def admin_orders(request):
     orders = OrderProduct.objects.all().order_by('-id')
+    
 
     context = {
         'orders': orders
@@ -357,3 +358,15 @@ def edit_coupon(request,id):
             "form" : form
         }
     return render(request, 'admin_templates/edit_coupon.html',context)
+
+
+def singleorder_details(request,id):
+    order=Order.objects.get(id=id)
+    orderproduct=OrderProduct.objects.get(id=id)
+    print("order")
+    print(order)
+    context={
+        'order':order,
+        'orderproduct':orderproduct
+    }
+    return render(request,'admin_templates/singleorder_details.html',context)
