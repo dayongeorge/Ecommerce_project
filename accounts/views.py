@@ -32,7 +32,6 @@ from django.views.generic import CreateView
 def home(request):
     product=Product.objects.all()
     latest_added_products = Product.objects.order_by('-created_at')[:3]
-    print(len(latest_added_products))
     return render(request,'user_templates/index.html',
                   {
                       'product':product,
