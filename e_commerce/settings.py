@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'admin_eternal',
-    # 'phonenumber-field',
+    'phonenumber_field',
     'phonenumbers',
     'cart',
     'orders',
