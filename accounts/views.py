@@ -216,15 +216,15 @@ def category(request):
 
 
 
-# @login_required(login_url='login_view')
-# def user_profile(request):
-#     # user = CustomUser.objects.all()
-#     userprofile=Userprofile.objects.get(user_id=request.user.id)
-#     context= {
-#         'userprofile':userprofile,
-#         'user':request.user,
-#     }
-#     return render(request,'user_templates/user_profile.html',context)
+@login_required(login_url='login_view')
+def user_profile(request):
+    # user = CustomUser.objects.all()
+    userprofile=UserProfile.objects.get(user_id=request.user.id)
+    context= {
+        'userprofile':userprofile,
+        'user':request.user,
+    }
+    return render(request,'user_templates/user_profile.html',context)
 
 
 
@@ -278,21 +278,21 @@ def addressbook(request):
     return render(request, 'user_templates/addressbook.html', context)
 
 
-# def sidebar(request):
-#       products=Product.objects.all()
-#       cats=Product.objects.distinct().values('category__name','category__id')
-#       brands=Product.objects.distinct().values('brand__name','brand__id')
-#       colors=Product.objects.distinct().values('color__title','color__id','color__color_code')
+def sidebar(request):
+      products=Product.objects.all()
+      cats=Product.objects.distinct().values('category__name','category__id')
+      brands=Product.objects.distinct().values('brand__name','brand__id')
+      colors=Product.objects.distinct().values('color__title','color__id','color__color_code')
 
     
-#       return render (request,'user_templates/sidebar.html',
-#     {
-#         'products':products,
-#          'cats':cats,
-#          'brands':brands,
-#          'colors':colors
+      return render (request,'user_templates/sidebar.html',
+    {
+        'products':products,
+         'cats':cats,
+         'brands':brands,
+         'colors':colors
 
-#           })
+          })
 
 
 def featured(request):

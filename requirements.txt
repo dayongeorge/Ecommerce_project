@@ -26,3 +26,6 @@ twilio                 ==  8.2.2
 tzdata                 ==  2023.3
 urllib3                ==  2.0.3
 yarl                   ==  1.9.2
+phonenumbers == 8.13.7
+phonenumberslite==8.13.7
+django-phonenumbers==1.0.1
