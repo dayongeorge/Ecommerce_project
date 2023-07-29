@@ -100,23 +100,16 @@ def cart(request,total=0,quantity=0,cart_items=None):
         cart_items=CartItem.objects.filter(cart=cart,is_active=True)
       
         #    (filter inside )
-        print(cart_items) 
+        
         for cart_item in cart_items:
-            print(cart_item)
             total += (cart_item.product.offer_price * cart_item.quantity)
             quantity +=cart_item.quantity
             tax=(2*total)/100
-            print(tax)
             total_price=total+tax
-            print("in for")
-            print(total_price)
             if request.session.get('total'):
                  total_price=request.session.get('total')
-                 print("in session")
-                 print(total_price)
             else:
                 total_price=total+tax
-            print(total_price)
     except ObjectDoesNotExist:
         total_price=0
         quantity=0
@@ -135,49 +128,10 @@ def cart(request,total=0,quantity=0,cart_items=None):
     return render(request,"user_templates/cart.html",context)
 
 
-# def cart(request):
-#     try:
-#         tax = 0
-#         total = 0
-#         quantity = 0
-#         current_user = request.user
-#         cart = Cart.objects.get(cart_id=_cart_id(request))
-#         cart_items = CartItem.objects.filter(cart=cart, is_active=True)
-
-#         for cart_item in cart_items:
-#             total += (cart_item.product.offer_price * cart_item.quantity)
-#             quantity += cart_item.quantity
-
-#         tax = (2 * total) / 100
-#         total_price = total + tax
-
-#         # Store the 'total_price' in the session
-#         request.session['total'] = total_price
-#     except ObjectDoesNotExist:
-#         total_price = 0
-#         quantity = 0
-#         tax = 0
-#         total = 0
-
-#     context = {
-#         'total': total,
-#         'quantity': quantity,
-#         'cart_items': cart_items,
-#         'tax': tax,
-#         'cart_total': total_price,
-#     }
-
-#     if not cart_items:
-#         context['empty_cart'] = True
-
-#     return render(request, "user_templates/cart.html", context)
-
 
 def update_cart_item_quantity(request):
      
         cart_item_id = request.GET.get('cart_item_id')
-        print("cart")
-        print(cart_item_id)
         action = request.GET.get('action')
 
         # cart_item = Cartitem.objects.get(id=cart_item_id)
@@ -198,7 +152,6 @@ def update_cart_item_quantity(request):
                 # cart_item.save()
 
         cart_item.save()
-        print("ghvv",cart_item.sub_total)
 
         
        
@@ -249,14 +202,11 @@ def remove_from_wishlist(request, product_id):
 
 
 def apply_coupon(request):
-    print('Coupon starts')
     if request.method == 'POST':
         data = {}
         body = json.loads(request.body)
         coupon_code = body.get('coupon')
-        print(coupon_code)
         total_price = body.get('total_price')
-        print(total_price)
 
         try:
             coupon = Coupon.objects.get(coupon_code__iexact=coupon_code, is_expired=False)
@@ -266,19 +216,13 @@ def apply_coupon(request):
         else:
             minimum_amount = coupon.minimum_amount
             discount_price = coupon.discount_price
-            print(discount_price)
             if total_price >= minimum_amount:
                 total_price -= discount_price
                 request.session['total'] = total_price
-                # total_price.save()
-                print(total_price)
                 data['message'] = f'{coupon.coupon_code} Applied'
-                print(data)
             else:
                 data['message'] = 'Not a Valid Coupon'
             data['total'] = total_price
-            # data.save()
-            print(data)
 
         return JsonResponse(data)
     
@@ -288,43 +232,4 @@ def apply_coupon(request):
 
 
 
-    # def add_cart(request, product_id):
-#     product = Product.objects.get(id=product_id)
-#     user = request.user
-
-#     try:
-#         cart = Cart.objects.get(cart_id=_cart_id(request))
-#     except Cart.DoesNotExist:
-#         cart = Cart.objects.create(
-#             cart_id=_cart_id(request)
-#         )
-#         cart.save()
-
-#     try:
-#         cart_item = CartItem.objects.get(product=product, cart=cart)
-#         cart_item.quantity += 1
-#         cart_item.save()
-#         success_condition = True
-#     except CartItem.DoesNotExist:
-#         cart_item = CartItem.objects.create(
-#             user=user,
-#             product=product,
-#             cart=cart,
-#             quantity=1,
-#         )
-#         cart_item.save()
-#         success_condition = True
     
-#     if success_condition:
-#         response = {
-#             'success': True,
-#             'quantity': cart_item.quantity,
-#             'subtotal': cart_item.sub_total
-#         }
-#     else:
-#         response = {
-#             'success': False,
-#             'message': 'Error message goes here'
-#         }
-
-#     return JsonResponse(response)

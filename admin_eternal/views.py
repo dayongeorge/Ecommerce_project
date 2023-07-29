@@ -51,16 +51,13 @@ def display_user(request):
   
 
 def admin_login(request):
-    print("inadminlogin")
 
     if request.method=='POST':
         
         username=request.POST['username']
-        print(username)
         password=request.POST['password']
         adminuser=authenticate(username=username,password=password)
         if adminuser is not None:
-            print(adminuser)
             if adminuser.is_superuser:
                 auth_login(request,adminuser)
                 return redirect(admin_index)
@@ -77,33 +74,7 @@ def Admin_logout(request):
     return redirect('admin_login')
 
 
-# @never_cache
-# @login_required(login_url='admin_login')
-# def add_user(request):
-#     if request.method == 'POST':
-#         form = CustomUserCreationForm(request.POST)
-#         print('hi')
-#         if form.is_valid():
-#             print("hello")
-#             form.save()
-#             return redirect(element)
-#     else:
-#         form = CustomUserCreationForm()
-#         print('h')
-#     return render(request, 'custom_admin/add_user.html',{'form':form})
 
-#this function edit or update user
-
-# def update_data(request,id):
-#     if request.method =='POST':
-#         pi = CustomUser.objects.get(pk=id)
-#         fm =Aforms(request.POST, instance=pi)
-#         if fm.is_valid():
-#             fm.save()
-#     else:
-#             pi = CustomUser.objects.get(pk=id)
-#             fm =Aforms(instance=pi)
-#     return render(request,"admin_templates/update.html",{'form':fm})
 
 
 
@@ -253,14 +224,11 @@ def delete_product(request, id):
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST, request.FILES)
-        print('hi')
         if form.is_valid():
-            print("hello")
             form.save()
             return redirect(display_category)
     else:
         form = CategoryForm()
-        print('h')
     return render(request, "admin_templates/add_category.html",{'form':form})
 
 @never_cache
@@ -363,8 +331,6 @@ def edit_coupon(request,id):
 def singleorder_details(request,id):
     order=Order.objects.get(id=id)
     orderproduct=OrderProduct.objects.get(id=id)
-    print("order")
-    print(order)
     context={
         'order':order,
         'orderproduct':orderproduct

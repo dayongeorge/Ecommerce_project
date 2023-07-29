@@ -50,21 +50,7 @@ def grand_totall(request):
 
 class Checkout(View):
     def get(self, request):
-        # cart = Cart.objects.get(user=request.user)
-        # cart_items = CartItem.objects.filter(user=request.user)
-        # address = Address.objects.filter(user=request.user)
-        # if not cart_items.exists():
-        #     return redirect('Checkout')
-        # sum = cart.get_total_price()
-        # total = cart.get_total_products()
-
-        # context = {
-        #     'cart_items': cart_items,
-        #     'address': address,
-        #     'sum': sum,
-        #     'total': total,
-        # }
-        # return render(request, 'checkout.html', context)
+       
         try:
             # cart = Cart.objects.get(user=request.user)
             cart_items = CartItem.objects.filter(user=request.user)
@@ -72,16 +58,8 @@ class Checkout(View):
 
             if cart_items.exists():
                 current_user=request.user
-                # if (request.session.get('total')):
-                #     sum = request.session.get('total')
-                # else:
-                # # prod = cart_items.get_subtotal()
-                #     sum = cart.get_total_price()
-                # # sum = cart.get_total_price()
-                # total = cart.get_total_products()
 
                 cart_items=CartItem.objects.filter(user=current_user)
-                print(cart_items)
                 cart_count=cart_items.count()
                 if cart_count <=0:
                     return redirect('shop')
@@ -146,8 +124,6 @@ def payment(request, id):
         else:
             grand_total=total+tax
         payment = client.order.create({ "amount": grand_total*100, "currency": "INR", "receipt": "order_rcptid_11"})
-        print(grand_total)
-        print(cart_items)
         context= {
             'wallet':wallet,
             'cart_items': cart_items,
@@ -252,8 +228,6 @@ class PlaceOrderView(View):
         cart_items.delete()
         if 'total' in request.session:
             del request.session['total']
-        print("ordernum")
-        print(order_number)
        
 
         # Redirect to a success page or show a success message
@@ -288,8 +262,6 @@ def order_complete(request,):
 def order_details(request,id):
     order=Order.objects.get(user=request.user,id=id)
     orderproduct=OrderProduct.objects.get(id=id)
-    print("order")
-    print(order)
     context={
         'order':order,
         'orderproduct':orderproduct
@@ -317,7 +289,6 @@ def orders(request):
 
 
 def cancel_order(request,order_id):
-    print(order_id)
     try:
         
             order = get_object_or_404(Order, pk=order_id, user=request.user)
@@ -335,7 +306,6 @@ def cancel_order(request,order_id):
             if order.payment.payment_method =='Online':
                 wallet, _ =Wallet.objects.get_or_create(user=request.user)
                 refund_amount=decimal.Decimal(order.order_total)
-                print(refund_amount)
                 wallet.balance += refund_amount
                 wallet.save()
 
@@ -345,7 +315,6 @@ def cancel_order(request,order_id):
 
 #order return function
 def return_order(request,order_id):
-    print(order_id)
     if request.method=="POST":
         return_reason=request.POST.get('return_reason')
         try:
@@ -356,7 +325,6 @@ def return_order(request,order_id):
             if order.payment.payment_method == 'Online' or 'COD':
                 wallet, _ = Wallet.objects.get_or_create(user=request.user)
                 refund_amount = decimal.Decimal(order.order_total)
-                print(refund_amount)
                 wallet.balance += refund_amount
                 wallet.save()
 
@@ -444,10 +412,10 @@ def wallet(request):
         wallet = Wallet.objects.get(user=request.user)
         user_profile =  UserProfile.objects.get( user=request.user)
         
-        if wallet:
-            print(wallet.balance)
+        
     except:
-        wallet = Wallet.objects.create(user=request.user, balance=0)
+        
+           wallet = Wallet.objects.create(user=request.user, balance=0)
     return render(request,'user_templates/wallet.html',{'wallet':wallet,'userprofile': user_profile,})
 
 
