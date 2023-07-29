@@ -2,7 +2,7 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from django.http import JsonResponse,HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse,HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login as auth_login,logout
 from django.views.decorators.cache import never_cache
@@ -218,7 +218,10 @@ def category(request):
 @login_required(login_url='login_view')
 def user_profile(request):
     # user = CustomUser.objects.all()
-    userprofile=UserProfile.objects.get(user_id=request.user.id)
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return render (request,'user_templates/user_profile.html')
     context= {
         'userprofile':userprofile,
         'user':request.user,
@@ -243,8 +246,30 @@ def user_profile(request):
     }
     return render(request, 'user_templates/user_profile.html', context)
 
+def add_profile(request):
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+            return redirect('user_profile')  # Redirect to user profile page after adding the profile
+    else:
+        form = UserProfileForm()
+    
+    context = {
+        'form': form,
+    }
+    return render(request, 'user_templates/add_profile.html', context)
+
+
+
 def edit_profile(request):
-    userprofile=UserProfile.objects.get(user=request.user)
+    try:
+        userprofile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return HttpResponseRedirect(reverse('add_user_profile'))
+
     if request.method=="POST":
         user_form=UserForm(request.POST,instance=request.user)
         profile_form=UserProfileForm(request.POST,request.FILES,instance=userprofile)
@@ -265,11 +290,11 @@ def edit_profile(request):
     return render(request,'user_templates/edit_profile.html',context)
 
 def addressbook(request):
-    userprofile = UserProfile.objects.get(user=request.user)
+    # userprofile = UserProfile.objects.get(user=request.user)
     address = Address.objects.filter(user=request.user)
     
     context = {
-        'userprofile': userprofile,
+       
         'user':request.user,
         'address':address,
     }

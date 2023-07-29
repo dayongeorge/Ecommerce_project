@@ -140,8 +140,8 @@
                             <tr>
                               <th scope="col">Product</th>
                               <th scope="col">Quantity</th>
-                              <th scope="col">Price</th>
-                              <th scope="col">Total</th>
+                              {% comment %} <th scope="col">Price</th>
+                              <th scope="col">Total</th> {% endcomment %}
                             </tr>
                           </thead>
                           <tbody>
@@ -163,13 +163,13 @@
                                   {{cart_item.quantity}}
                                 </div>
                               </td>
-                              <td>
+                              {% comment %} <td>
                                 <h5>{{cart_item.product.offer_price}}</h5>
                               </td>
                              
                               <td>
                                 <h5><b> {{total}} </b></h5>
-                              </td>
+                              </td> {% endcomment %}
                             </tr>
                           
                      

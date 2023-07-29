@@ -11,7 +11,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('payment/<int:id>/',views.payment,name="payment"),
-    path('Paypal_payments',views.Paypal_payments,name="Paypal_payments"),
+    # path('Paypal_payments',views.Paypal_payments,name="Paypal_payments"),
 
     path('Checkout',views.Checkout.as_view(),name="Checkout"),
     path('place-order-cod/<int:id>/<str:payment_method>/',views.PlaceOrderView.as_view(),name='place_order'),
