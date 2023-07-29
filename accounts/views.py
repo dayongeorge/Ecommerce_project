@@ -535,3 +535,7 @@ def resetPassword(request):
 
 def contact(request):
     return render(request,'user_templates/contact.html')
+
+
+
+    # deleted all print statements form the cdoe
