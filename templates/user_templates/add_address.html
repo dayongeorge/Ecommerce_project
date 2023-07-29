@@ -140,7 +140,7 @@
         <form action="" method="POST">
             {% csrf_token %}
            {{form.as_p}}
-            
+            {% comment %} hi {% endcomment %}
             <input type="submit" value="add address" class="btn btn-primary">
         </form>
             
