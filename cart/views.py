@@ -16,34 +16,7 @@ def _cart_id(request):
         cart = request.session.create()
     return cart
 
-# def add_cart(request,product_id):
-#     product=Product.objects.get(id=product_id)
-#     user=request.user 
-#     try:
-#         cart=Cart.objects.get(cart_id=_cart_id(request))
-#     except Cart.DoesNotExist:
-#         cart=Cart.objects.create(
-#             cart_id=_cart_id(request),
-            
-#         )
-#     cart.save()
-     
-#     try:
-#         cart_item=CartItem.objects.get(product=product,cart=cart)
-#         cart_item.quantity+=1
-#         cart_item.save()
-#     except CartItem.DoesNotExist:
-#         cart_item=CartItem.objects.create(
-#             user=user,
-#             product=product,
-#             cart=cart,
-#             quantity=1,
-            
-            
-#         )
-#         cart_item.save()
-        
-#     return redirect('cart')
+
 
 
 #############################################
@@ -79,8 +52,8 @@ def add_cart(request, product_id):
         success_condition = True
     
     if success_condition:
-        response={'success':'success'}
-        return redirect('cart')
+        response={'success':True}
+        # return redirect('cart')
     else:
         response = {'status': 'error', 'message': 'Error message goes here'}
 
@@ -100,46 +73,7 @@ def remove_cart(request,product_id):
 #######################################################
 
 
-# def add_cart(request, product_id):
-#     product = Product.objects.get(id=product_id)
-#     user = request.user
 
-#     try:
-#         cart = Cart.objects.get(cart_id=_cart_id(request))
-#     except Cart.DoesNotExist:
-#         cart = Cart.objects.create(
-#             cart_id=_cart_id(request)
-#         )
-#         cart.save()
-
-#     try:
-#         cart_item = CartItem.objects.get(product=product, cart=cart)
-#         cart_item.quantity += 1
-#         cart_item.save()
-#         success_condition = True
-#     except CartItem.DoesNotExist:
-#         cart_item = CartItem.objects.create(
-#             user=user,
-#             product=product,
-#             cart=cart,
-#             quantity=1,
-#         )
-#         cart_item.save()
-#         success_condition = True
-    
-#     if success_condition:
-#         response = {
-#             'success': True,
-#             'quantity': cart_item.quantity,
-#             'subtotal': cart_item.sub_total
-#         }
-#     else:
-#         response = {
-#             'success': False,
-#             'message': 'Error message goes here'
-#         }
-
-#     return JsonResponse(response)
 
 
 
@@ -266,49 +200,13 @@ def update_cart_item_quantity(request):
         cart_item.save()
         print("ghvv",cart_item.sub_total)
 
-        # try:
-        #     cart = Cart.objects.get(user=request.user)
-        #     cart_items = CartItem.objects.filter(cart=cart)
-            
-        # except (Cart.DoesNotExist):
-        #      return JsonResponse({'status': 404, 'error': 'Cart not found'})
-       
-        # if 'total' in request.session:
-        #      del request.session['total'] 
         
-        # cart_items = CartItem.objects.filter(cart=cart)
-        # cart_total = sum(item.sub_total() for item in cart_items)
-        # tax = calculate_tax(cart_total)
-        # , 'total': cart_total,
        
   
 
         return JsonResponse({'status': 200,'quantity': cart_item.quantity,'subtotal': cart_item.sub_total() })
 
-# @login_required(login_url='login_view')
-# def checkout(request,total=0,quantity=0,cart_items=None):
-#     try:
-#         tax = 0
-#         grand_total = 0
-#         total=0
-#         cart=Cart.objects.get(cart_id=_cart_id(request))
-#         cart_items=CartItem.objects.filter(cart=cart,is_active=True)
-#         for cart_item in cart_items:
-#             total += (cart_item.product.offer_price * cart_item.quantity)
-#             quantity +=cart_item.quantity
-#         tax=(2*total)/100
-#         grand_total=total+tax
-#     except ObjectDoesNotExist:
-#         pass
 
-#     context={
-#         'total':total,
-#         'quantity':quantity,
-#         'cart_items':cart_items,
-#         'tax' :tax,
-#         'grand_total': grand_total,
-#     }
-#     return render (request,'user_templates/checkout.html',context)
 
 
 
@@ -383,3 +281,50 @@ def apply_coupon(request):
             print(data)
 
         return JsonResponse(data)
+    
+
+
+
+
+
+
+    # def add_cart(request, product_id):
+#     product = Product.objects.get(id=product_id)
+#     user = request.user
+
+#     try:
+#         cart = Cart.objects.get(cart_id=_cart_id(request))
+#     except Cart.DoesNotExist:
+#         cart = Cart.objects.create(
+#             cart_id=_cart_id(request)
+#         )
+#         cart.save()
+
+#     try:
+#         cart_item = CartItem.objects.get(product=product, cart=cart)
+#         cart_item.quantity += 1
+#         cart_item.save()
+#         success_condition = True
+#     except CartItem.DoesNotExist:
+#         cart_item = CartItem.objects.create(
+#             user=user,
+#             product=product,
+#             cart=cart,
+#             quantity=1,
+#         )
+#         cart_item.save()
+#         success_condition = True
+    
+#     if success_condition:
+#         response = {
+#             'success': True,
+#             'quantity': cart_item.quantity,
+#             'subtotal': cart_item.sub_total
+#         }
+#     else:
+#         response = {
+#             'success': False,
+#             'message': 'Error message goes here'
+#         }
+
+#     return JsonResponse(response)

@@ -65,16 +65,20 @@
                     <td>{{ order.created_at }}</td>
                   </tr>
                   <tr>
+                    <th>Payment ID:</th>
+                    <td>{{ order.payment.payment_id }}</td>
+                  </tr>
+                  <tr>
                     <th>Product Name</th>
                     <td>{{orderproduct.product.name}}</td>
                     
                   </tr>
                   <!-- Include any other order-related information in the same format -->
                   <tr>
-                    <th>Product Price:</th>
-                    <td >₹{{ total_price }}</td>
+                    {% comment %} <th>Product Price:</th>
+                    <td >₹{{ orderproduct.product.offer_price }}</td> {% endcomment %}
                     <th>Tax:</th>
-                    <td >₹{{ total_price }}</td>
+                    <td >₹{{ order.tax }}</td>
                 </tr>
                     <tr>
                     <th>Quantity:</th>

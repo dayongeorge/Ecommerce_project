@@ -100,7 +100,7 @@
         <div class="sidebar pl-5 ">
             <ul class="nav flex-column">
                 <div class="row ">
-                <img src="{{userprofile.profile_picture.url}}" alt="Profile Image" class="profile-image">
+                {% comment %} <img src="{{userprofile.profile_picture.url}}" alt="Profile Image" class="profile-image"> {% endcomment %}
                 <div class="field-value nav-link alignn">{{user.username}}</div>
             </div>
                 <li class="nav-item pt-5">
@@ -134,7 +134,7 @@
             <div class="title"> <h2> Address Book</h2></div>
             <div class="col-9 content p-3">
                 <div class="profile-container">
-                    <img src="{{userprofile.profile_picture.url}}" alt="Profile Image" class="profile-image">
+                    {% comment %} <img src="{{userprofile.profile_picture.url}}" alt="Profile Image" class="profile-image"> {% endcomment %}
                     <div class="profile-details letter_design">
                         {% comment %} {% for user in user  %} {% endcomment %}
                         {% comment %} <div class="field ">

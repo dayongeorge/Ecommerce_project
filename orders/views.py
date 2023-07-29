@@ -138,13 +138,14 @@ def payment(request, id):
     tax=0
     for cart_item in cart_items:
         total =total_amount(request)
-        payment = client.order.create({ "amount": total*100, "currency": "INR", "receipt": "order_rcptid_11"})
+        # payment = client.order.create({ "amount": total*100, "currency": "INR", "receipt": "order_rcptid_11"})
         quantity +=cart_item.quantity
         tax=(2*total)/100
         if request.session.get('total'):
             grand_total=request.session.get('total')
         else:
             grand_total=total+tax
+        payment = client.order.create({ "amount": grand_total*100, "currency": "INR", "receipt": "order_rcptid_11"})
         print(grand_total)
         print(cart_items)
         context= {
@@ -177,11 +178,22 @@ class PlaceOrderView(View):
             status='Success'
         else:
             status='Pending'
+        total=0
 
         # Retrieve the user's cart or order items
         cart_items = CartItem.objects.filter(user=request.user)
+        for cart_item in cart_items:
+            total =total_amount(request)
+            # payment = client.order.create({ "amount": total*100, "currency": "INR", "receipt": "order_rcptid_11"})
+            
+            tax=(2*total)/100
+            if request.session.get('total'):
+                grand_total=request.session.get('total')
+            else:
+                grand_total=total+tax
         total_price=total_amount(request)
         grand_total=grand_totall(request)
+        
 
         if payment_method=='Wallet':
             wallet = get_object_or_404(Wallet, user=user)
@@ -197,7 +209,7 @@ class PlaceOrderView(View):
             user=user,
             payment_method=payment_method,
             payment_id=generate_order_id(),
-            amount_paid=total_price, 
+            amount_paid=grand_total, 
             status=status  # Set initial status to Pending
         )
 
@@ -208,8 +220,8 @@ class PlaceOrderView(View):
             address=address,
             order_number=generate_order_id(), 
             order_note='...',  
-            order_total=total_price,  
-            tax=0.0,  
+            order_total=grand_total,  
+            tax=tax,  
             status='New',  
             ip='192.158.1.38', 
             is_ordered=True  
@@ -223,7 +235,7 @@ class PlaceOrderView(View):
                 user=user,
                 product=cart_item.product,
                 quantity=cart_item.quantity,
-                product_price=cart_item.product.offer_price,
+                product_price=grand_total,
                 ordered=False
             )
           
@@ -242,68 +254,51 @@ class PlaceOrderView(View):
             del request.session['total']
         print("ordernum")
         print(order_number)
+       
 
         # Redirect to a success page or show a success message
-        redirect_url = reverse('order_complete') + f'?order_number={order_number}&payment_id={payment_id}&total_price={total_price}&payment_method={payment_method}&address_id={address_id}'
+        redirect_url = reverse('order_complete') + f'?order_number={order_number}&payment_id={payment_id}&grand_total={grand_total}&payment_method={payment_method}&address_id={address_id}&tax={tax}&total={total}'
         return redirect(redirect_url)
         # return redirect('order_complete')
+def order_complete(request,):
+    order_number = request.GET.get('order_number')
+    payment_id = request.GET.get('payment_id')  
+    grand_total = request.GET.get('grand_total')
+    tax = request.GET.get('tax')
+    total = request.GET.get('total')
+
+    payment_method = request.GET.get('payment_method')
+    user=request.user
+    address_id=request.GET.get('address_id')
+    address = Address.objects.get(id=address_id)
+    # order_id = request.session.get('order_id')
+    # order = Order.objects.get(id=order_id)
+
+
+    return render (request,'order_templates/order_complete.html',{
+        'address':address,
+        'order_number': order_number,
+        'payment_id': payment_id,
+        'tax':tax,
+        'total':total,
+        'total_price': grand_total,
+        'payment_method': payment_method
+        })
+
+def order_details(request,id):
+    order=Order.objects.get(user=request.user,id=id)
+    orderproduct=OrderProduct.objects.get(id=id)
+    print("order")
+    print(order)
+    context={
+        'order':order,
+        'orderproduct':orderproduct
+    }
+    return render(request,'user_templates/order_details.html',context)
     
 
 
-## Paypal payment method with all data adding 
-def Paypal_payments(request):
-    body=json.loads(request.body)
-    order=Order.objects.get(user=request.user,is_ordered=False,order_number=body['orderID'])
-    # store transaction details inside payment model
-    print(body['transID'])
-    payment=Payment(
-        user=request.user,
-        payment_id=body['transID'],
-        payment_method=body['payment_method'],
-        
-        amount_paid=order.order_total,
-        orderstatuses=body['status'],
-    )
-    payment.save()
-    print("payment printing")
-    print(payment)
-    order.payment=payment
-    order.is_ordered=True
-    order.save()
 
-    # move the cart items to Order Product table
-
-    cart_items=CartItem.objects.filter(user=request.user)
-
-    for item in cart_items:
-        orderproduct=OrderProduct()
-        orderproduct.payment=payment
-        orderproduct.quantity=item.quantity
-        orderproduct.product_price=item.product.offer_price
-        orderproduct.ordered=True
-        orderproduct.save()
-        print("order product")
-        print(orderproduct)
-
-
-    #Reduce the quantity of the sold products
-        product=Product.objects.get(id=item.product_id)
-        product.quantity-=item.quantity
-        product.save()
-    #clear cart
-    CartItem.objects.filter(user=request.user).delete()
-    print(request.user)
-    #send order recieved email to customer
-    # send order number and transaction id back to sendData method via Jsonresponse
-    data={
-         'order_number':order.order_number,
-         'transID':payment.payment_id,
-    }
-    return JsonResponse(data)
-
-    # return redirect('order_complete')
-
-    # return render (request,'order_templates/payments.html')
     
 
 
@@ -312,7 +307,7 @@ def Paypal_payments(request):
 
 def orders(request):
 
-    orders = OrderProduct.objects.filter(user=request.user,ordered=False)
+    orders = OrderProduct.objects.filter(user=request.user,ordered=False).order_by('-id')
     
     context = {'orders': orders}
     
@@ -456,37 +451,10 @@ def wallet(request):
     return render(request,'user_templates/wallet.html',{'wallet':wallet,'userprofile': user_profile,})
 
 
-def order_complete(request,):
-    order_number = request.GET.get('order_number')
-    payment_id = request.GET.get('payment_id')  
-    total_price = request.GET.get('total_price')
-    payment_method = request.GET.get('payment_method')
-    user=request.user
-    address_id=request.GET.get('address_id')
-    address = Address.objects.get(id=address_id)
-    # order_id = request.session.get('order_id')
-    # order = Order.objects.get(id=order_id)
 
-
-    return render (request,'order_templates/order_complete.html',{
-        'address':address,
-        'order_number': order_number,
-        'payment_id': payment_id,
-        'total_price': total_price,
-        'payment_method': payment_method
-        })
    
 
-def order_details(request,id):
-    order=Order.objects.get(user=request.user,id=id)
-    orderproduct=OrderProduct.objects.get(id=id)
-    print("order")
-    print(order)
-    context={
-        'order':order,
-        'orderproduct':orderproduct
-    }
-    return render(request,'user_templates/order_details.html',context)
+
 
 
 
@@ -527,7 +495,60 @@ def order_details(request,id):
 
 
    
+# ## Paypal payment method with all data adding 
+# def Paypal_payments(request):
+#     body=json.loads(request.body)
+#     order=Order.objects.get(user=request.user,is_ordered=False,order_number=body['orderID'])
+#     # store transaction details inside payment model
+#     print(body['transID'])
+#     payment=Payment(
+#         user=request.user,
+#         payment_id=body['transID'],
+#         payment_method=body['payment_method'],
+        
+#         amount_paid=order.order_total,
+#         orderstatuses=body['status'],
+#     )
+#     payment.save()
+#     print("payment printing")
+#     print(payment)
+#     order.payment=payment
+#     order.is_ordered=True
+#     order.save()
 
+#     # move the cart items to Order Product table
+
+#     cart_items=CartItem.objects.filter(user=request.user)
+
+#     for item in cart_items:
+#         orderproduct=OrderProduct()
+#         orderproduct.payment=payment
+#         orderproduct.quantity=item.quantity
+#         orderproduct.product_price=item.product.offer_price
+#         orderproduct.ordered=True
+#         orderproduct.save()
+#         print("order product")
+#         print(orderproduct)
+
+
+#     #Reduce the quantity of the sold products
+#         product=Product.objects.get(id=item.product_id)
+#         product.quantity-=item.quantity
+#         product.save()
+#     #clear cart
+#     CartItem.objects.filter(user=request.user).delete()
+#     print(request.user)
+#     #send order recieved email to customer
+#     # send order number and transaction id back to sendData method via Jsonresponse
+#     data={
+#          'order_number':order.order_number,
+#          'transID':payment.payment_id,
+#     }
+#     return JsonResponse(data)
+
+#     # return redirect('order_complete')
+
+#     # return render (request,'order_templates/payments.html')
 
 
 # def cancel_order(request, order_id):

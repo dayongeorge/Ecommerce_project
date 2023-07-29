@@ -135,8 +135,8 @@
     <div class="bg-light rounded h-100 p-4 ">
         <div class="title"> <h2> Personal Information</h2></div>
         <div class="text-right">
-            <img src="{{userprofile.profile_picture.url}}" alt="Profile_Picture" width="100" style="border-radius:50px ">
-        </div>
+            {% comment %} <img src="{{userprofile.profile_picture.url}}" alt="Profile_Picture" width="100" style="border-radius:50px ">
+        </div> {% endcomment %}
         <form action="{% url 'edit_profile'%}" method="POST">
             {% csrf_token %}
             <div class="form_row">

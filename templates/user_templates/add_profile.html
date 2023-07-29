@@ -1,0 +1,20 @@
+<!-- templates/user_templates/add_profile.html -->
+
+{% extends 'user_templates/base.html' %}
+
+{% block content %}
+
+<div class="col-lg-8 mx-auto">
+    <div class="bg-light rounded h-100 p-4">
+        <div class="title">
+            <h2>Add Profile</h2>
+        </div>
+        <form action="{% url 'add_profile' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Add Profile" class="btn btn-primary">
+        </form>
+    </div>
+</div>
+
+{% endblock %}
