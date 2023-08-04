@@ -88,7 +88,7 @@ def signout(request):
     messages.success(request, "Logged Out Successfully!!")
     return redirect('signup')
 
-# otp verification
+# otp verification using twilio
 
 def verify_code(request):
     if request.method == 'POST':
